@@ -319,7 +319,7 @@ h1, h2, h3, .logo-text, .intro-quote {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('https://placehold.co/1920x1080/111111/2A2A2A?text=Cinematic+Backdrop') center/cover no-repeat;
+  background: url('https://placehold.co/1920x1080/111111/2A2A2A?text=Brodcasting+texar') center/cover no-repeat;
   opacity: 0.4;
   z-index: 0;
   transform: scale(1.05);
