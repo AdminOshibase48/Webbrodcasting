@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Broadcasting SMK Texar</title>
+  <link rel="stylesheet" href=".../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+      background: #050505;
+    }
+    .admin-sidebar {
+      width: 280px;
+      background: #0B0B0B;
+      border-right: 1px solid rgba(198,168,91,0.2);
+      padding: 32px 24px;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .admin-sidebar .brand {
+      margin-bottom: 40px;
+    }
+    .admin-sidebar .nav-menu {
+      list-style: none;
+    }
+    .admin-sidebar .nav-menu li {
+      margin-bottom: 8px;
+    }
+    .admin-sidebar .nav-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: #A1A1AA;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .admin-sidebar .nav-menu a:hover,
+    .admin-sidebar .nav-menu a.active {
+      background: rgba(198,168,91,0.1);
+      color: #C6A85B;
+    }
+    .admin-sidebar .nav-menu a i {
+      width: 24px;
+    }
+    .logout-btn {
+      margin-top: 40px;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid rgba(198,168,91,0.3);
+      border-radius: 12px;
+      color: #ff6b6b;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+    }
+    .logout-btn:hover {
+      background: rgba(255,107,107,0.1);
+      border-color: #ff6b6b;
+    }
+    .admin-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 32px 40px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(198,168,91,0.1);
+    }
+    .admin-header h1 {
+      font-size: 1.8rem;
+      font-family: 'Playfair Display', serif;
+      color: #C6A85B;
+    }
+    .add-btn {
+      background: #C6A85B;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      color: #050505;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .add-btn:hover {
+      background: #E5D3A1;
+      transform: translateY(-2px);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(198,168,91,0.1);
+    }
+    .data-table th {
+      color: #C6A85B;
+      font-weight: 500;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+    .data-table td {
+      color: #D1D1D6;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .edit-btn, .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+    }
+    .edit-btn { color: #C6A85B; }
+    .delete-btn { color: #ff6b6b; }
+    .edit-btn:hover, .delete-btn:hover { transform: scale(1.1); }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #0B0B0B;
+      border: 1px solid rgba(198,168,91,0.3);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+    }
+    .modal-content h3 {
+      font-family: 'Playfair Display', serif;
+      color: #C6A85B;
+      margin-bottom: 24px;
+    }
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(198,168,91,0.2);
+      border-radius: 8px;
+      color: #F8F8F8;
+    }
+    .modal-content button {
+      padding: 10px 24px;
+      background: #C6A85B;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .admin-sidebar {
+        width: 80px;
+        padding: 20px 12px;
+      }
+      .admin-sidebar .brand-text,
+      .admin-sidebar .nav-menu a span {
+        display: none;
+      }
+      .admin-content {
+        margin-left: 80px;
+        padding: 20px;
+      }
+      .data-table {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <div class="brand">
+        <div class="logo-circle"><img src=".../assets/gambar/favicon.png" alt="Logo"></div>
+        <div class="brand-text">
+          <h2>Broadcasting</h2>
+          <p>Admin Panel</p>
+        </div>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" data-tab="events" class="active"><i class="fas fa-calendar-alt"></i><span> Dokumentasi</span></a></li>
+        <li><a href="#" data-tab="members"><i class="fas fa-users"></i><span> Anggota</span></a></li>
+      </ul>
+      <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </aside>
+    
+    <main class="admin-content">
+      <div class="admin-header">
+        <h1 id="panelTitle">Kelola Dokumentasi</h1>
+        <button class="add-btn" id="addBtn">+ Tambah Baru</button>
+      </div>
+      
+      <div id="eventsTab" class="tab-content active">
+        <table class="data-table">
+          <thead>
+            <tr><th>Judul</th><th>Tanggal</th><th>Link Drive</th><th>Aksi</th></tr>
+          </thead>
+          <tbody id="eventsTableBody"></tbody>
+        </table>
+      </div>
+      
+      <div id="membersTab" class="tab-content">
+        <table class="data-table">
+          <thead><tr><th>Nama</th><th>Jabatan</th><th>Divisi</th><th>Aksi</th></tr></thead>
+          <tbody id="membersTableBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Tambah Data</h3>
+      <div id="modalForm"></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button onclick="closeModal()">Batal</button>
+        <button id="saveBtn">Simpan</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src=".../assets/js/admin.js"></script>
+</body>
+</html>
