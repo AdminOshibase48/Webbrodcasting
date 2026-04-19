@@ -959,3 +959,127 @@ h1, h2, h3, .logo-text, .intro-quote {
     padding: 6px 16px;
   }
 }
+
+/* ==================== WORKS / DOKUMENTASI SECTION ==================== */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.work-item {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #0B0B0B;
+  transition: all 0.4s ease;
+  aspect-ratio: 16 / 9;
+}
+
+.work-item:hover {
+  transform: translateY(-8px);
+}
+
+.work-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease, filter 0.3s ease;
+  filter: brightness(0.75);
+}
+
+.work-item:hover img {
+  transform: scale(1.05);
+  filter: brightness(0.55);
+}
+
+.work-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.work-item:hover .work-overlay {
+  opacity: 1;
+}
+
+.work-overlay span {
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 3px;
+  color: #E5D3A1;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 20px;
+  border-left: 2px solid #C6A85B;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.work-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  padding: 30px 16px 12px;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  color: #C6A85B;
+  font-family: 'Poppins', sans-serif;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.work-item:hover .work-caption {
+  transform: translateY(0);
+}
+
+/* Loading & Empty States */
+.loading-spinner {
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 60px;
+}
+
+.loading-spinner i {
+  font-size: 2rem;
+  color: #C6A85B;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-state {
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 60px;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: #C6A85B;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .works-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .work-overlay span {
+    font-size: 0.75rem;
+    padding: 6px 16px;
+  }
+}
