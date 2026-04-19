@@ -162,125 +162,91 @@
     </div>
   </div>
   
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // ⚠️ GANTI DENGAN KONFIGURASI SUPABASE KAMU ⚠️
-    const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ⚠️ GANTI DENGAN KONFIGURASI SUPABASE KAMU ⚠️
+  const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
+  
+  // Gunakan variabel berbeda atau langsung inisialisasi
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  console.log('Supabase URL:', SUPABASE_URL);
+  
+  const loginBtn = document.getElementById('loginBtn');
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPassword = document.getElementById('loginPassword');
+  const errorMsg = document.getElementById('errorMessage');
+  const successMsg = document.getElementById('successMessage');
+  
+  async function handleLogin() {
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
     
-    console.log('Supabase URL:', SUPABASE_URL);
-    console.log('Supabase Key:', SUPABASE_KEY ? 'OK' : 'MISSING');
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
     
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-    const loginBtn = document.getElementById('loginBtn');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPassword = document.getElementById('loginPassword');
-    const errorMsg = document.getElementById('errorMessage');
-    const successMsg = document.getElementById('successMessage');
-    const debugInfo = document.getElementById('debugInfo');
-    const debugText = document.getElementById('debugText');
-    
-    // Show debug (hapus comment untuk debugging)
-    // debugInfo.style.display = 'block';
-    
-    async function testConnection() {
-      debugText.innerHTML = 'Mencoba koneksi ke Supabase...';
-      try {
-        const { data, error } = await supabase.from('events').select('count', { count: 'exact', head: true });
-        if (error) {
-          debugText.innerHTML = `Koneksi error: ${error.message}`;
-        } else {
-          debugText.innerHTML = '✅ Koneksi ke Supabase BERHASIL!';
-        }
-      } catch (err) {
-        debugText.innerHTML = `❌ Gagal konek: ${err.message}`;
-      }
+    if (!email || !password) {
+      errorMsg.style.display = 'block';
+      errorMsg.textContent = 'Email dan password wajib diisi!';
+      return;
     }
     
-    // testConnection();
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Memproses...';
     
-    async function handleLogin() {
-      const email = loginEmail.value.trim();
-      const password = loginPassword.value;
+    try {
+      console.log('Mencoba login dengan email:', email);
       
-      // Reset messages
-      errorMsg.style.display = 'none';
-      successMsg.style.display = 'none';
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
       
-      // Validasi
-      if (!email || !password) {
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = 'Email dan password wajib diisi!';
-        return;
+      console.log('Response:', data, error);
+      
+      if (error) throw error;
+      
+      if (data && data.session) {
+        successMsg.style.display = 'block';
+        successMsg.textContent = 'Login berhasil! Mengalihkan...';
+        
+        localStorage.setItem('admin_token', data.session.access_token);
+        localStorage.setItem('admin_user', JSON.stringify(data.user));
+        
+        setTimeout(() => {
+          window.location.href = 'admin-panel.html';
+        }, 1000);
+      } else {
+        throw new Error('Tidak ada session yang diterima');
       }
       
-      loginBtn.disabled = true;
-      loginBtn.textContent = 'Memproses...';
+    } catch (error) {
+      console.error('Login error detail:', error);
       
-      try {
-        console.log('Mencoba login dengan email:', email);
-        
-        // Coba login dengan Supabase Auth
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-        
-        console.log('Response:', data, error);
-        
-        if (error) {
-          throw error;
-        }
-        
-        if (data && data.session) {
-          // Login sukses
-          successMsg.style.display = 'block';
-          successMsg.textContent = 'Login berhasil! Mengalihkan...';
-          
-          localStorage.setItem('admin_token', data.session.access_token);
-          localStorage.setItem('admin_user', JSON.stringify(data.user));
-          
-          setTimeout(() => {
-            window.location.href = 'admin-panel.html';
-          }, 1000);
-        } else {
-          throw new Error('Tidak ada session yang diterima');
-        }
-        
-      } catch (error) {
-        console.error('Login error detail:', error);
-        
-        let errorMessage = 'Login gagal. ';
-        
-        if (error.message.includes('Invalid login credentials')) {
-          errorMessage += 'Email atau password salah!';
-        } else if (error.message.includes('Email not confirmed')) {
-          errorMessage += 'Email belum dikonfirmasi. Cek email kamu untuk verifikasi.';
-        } else if (error.message.includes('Invalid email')) {
-          errorMessage += 'Format email tidak valid.';
-        } else {
-          errorMessage += error.message;
-        }
-        
-        errorMsg.style.display = 'block';
-        errorMsg.textContent = errorMessage;
-        
-        // Debug tambahan
-        debugText.innerHTML = `Error: ${error.message}`;
-        debugInfo.style.display = 'block';
-        
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Login →';
+      let errorMessage = 'Login gagal. ';
+      
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage += 'Email atau password salah!';
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage += 'Email belum dikonfirmasi. Cek email kamu untuk verifikasi.';
+      } else {
+        errorMessage += error.message;
       }
+      
+      errorMsg.style.display = 'block';
+      errorMsg.textContent = errorMessage;
+      
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login →';
     }
-    
-    // Event listeners
-    loginBtn.addEventListener('click', handleLogin);
-    loginPassword.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
-  </script>
+  }
+  
+  loginBtn.addEventListener('click', handleLogin);
+  loginPassword.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
 </body>
 </html>
