@@ -219,20 +219,27 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../assets/js/home.js"></script>
 <script>
-  // Supabase configuration
+  // ==================== KONFIGURASI SUPABASE ====================
+  // GANTI DENGAN PROJECT SUPABASE KAMU!
   const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  // Gunakan nama variabel yang BERBEDA untuk menghindari konflik
+  // Jangan pakai 'supabase' karena sudah dipakai oleh library
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   
   let allEvents = [];
+  let currentFilter = 'all';
   
+  // ==================== LOAD EVENTS ====================
   async function loadEvents() {
     const container = document.getElementById('eventsContainer');
+    if (!container) return;
+    
     container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i><p>Memuat dokumentasi...</p></div>';
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('events')
       .select('*')
       .order('event_date', { ascending: false });
@@ -243,9 +250,9 @@
       return;
     }
     
-    allEvents = data;
+    allEvents = data || [];
     renderEvents(allEvents);
-    setupFilters(data);
+    setupFilters(allEvents);
   }
   
   function renderEvents(events) {
@@ -257,8 +264,8 @@
     }
     
     container.innerHTML = events.map(event => `
-      <div class="event-card" data-id="${event.id}" data-drive="${event.drive_link}">
-        <img class="event-image" src="${event.thumbnail || 'https://placehold.co/800x500/191919/C6A85B?text=' + encodeURIComponent(event.title)}" alt="${event.title}">
+      <div class="event-card" data-id="${event.id}" data-drive="${escapeHtml(event.drive_link)}">
+        <img class="event-image" src="${escapeHtml(event.thumbnail || 'https://placehold.co/800x500/191919/C6A85B?text=' + encodeURIComponent(event.title))}" alt="${escapeHtml(event.title)}" loading="lazy">
         <div class="event-info">
           <h3 class="event-title">${escapeHtml(event.title)}</h3>
           <div class="event-date"><i class="far fa-calendar-alt"></i> ${formatDate(event.event_date)}</div>
@@ -267,7 +274,7 @@
       </div>
     `).join('');
     
-    // Add click handlers
+    // Add click handlers untuk buka Google Drive
     document.querySelectorAll('.event-card').forEach(card => {
       card.addEventListener('click', () => {
         const driveLink = card.dataset.drive;
@@ -277,8 +284,10 @@
   }
   
   function setupFilters(events) {
-    const years = [...new Set(events.map(e => e.event_date ? new Date(e.event_date).getFullYear() : null).filter(y => y))];
     const filterContainer = document.getElementById('filterButtons');
+    if (!filterContainer) return;
+    
+    const years = [...new Set(events.map(e => e.event_date ? new Date(e.event_date).getFullYear() : null).filter(y => y))];
     
     const yearButtons = years.map(year => `
       <button class="filter-btn" data-filter="${year}">${year}</button>
@@ -313,15 +322,84 @@
   
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  
+  // ==================== NAVBAR SCROLL EFFECT ====================
+  function initNavbar() {
+    const navbar = document.getElementById('navbar');
+    if (!navbar) return;
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
     });
   }
   
-  loadEvents();
+  // ==================== MOBILE MENU ====================
+  function initMobileMenu() {
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    if (!burgerBtn || !mobileMenu) return;
+    
+    burgerBtn.addEventListener('click', () => {
+      burgerBtn.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+      
+      if (mobileMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    });
+    
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        burgerBtn.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+  
+  // ==================== SMOOTH SCROLL ====================
+  function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === "#" || targetId === "") return;
+        const target = document.querySelector(targetId);
+        if (target) {
+          e.preventDefault();
+          const offset = 80;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  }
+  
+  // ==================== INITIALIZE ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    initNavbar();
+    initMobileMenu();
+    initSmoothScroll();
+    loadEvents();
+  });
 </script>
 </body>
 </html>
