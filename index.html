@@ -109,7 +109,7 @@
       <a href="#program">Program</a>
       <a href="#divisi">Divisi</a>
       <a href="#anggota">Anggota</a>
-      <a href="#dokumentasi">Dokumentasi</a>
+      <a href="pages/dokumentasi">Dokumentasi</a>
       <a href="#kontak">Kontak</a>
     </div>
     <div class="burger" id="burgerBtn" aria-label="Menu">
@@ -261,38 +261,14 @@
   </div>
 </section>
 
-<!-- DOKUMENTASI / WORKS SECTION -->
+<!-- DOKUMENTASI / WORKS SECTION (TERHUBUNG SUPABASE) -->
 <section id="dokumentasi" class="section reveal">
   <div class="container">
     <div class="section-sub">— works —</div>
-    <div class="works-grid">
-      <div class="work-item" data-drive="https://drive.google.com/drive/folders/1broadcast-mpls2025">
-        <img src="https://placehold.co/800x500/191919/C6A85B?text=MPLS+2025" alt="Dokumentasi MPLS 2025 Broadcasting SMK Texar">
-        <div class="work-overlay">
-          <span>MPLS 2025</span>
-        </div>
-        <div class="work-caption">Moment Perdana</div>
-      </div>
-      <div class="work-item" data-drive="https://drive.google.com/drive/folders/1broadcast-debat">
-        <img src="https://placehold.co/800x500/191919/E5D3A1?text=Lomba+Debat" alt="Liputan Lomba Debat oleh Broadcasting">
-        <div class="work-overlay">
-          <span>Lomba Debat</span>
-        </div>
-        <div class="work-caption">Liputan Provinsi</div>
-      </div>
-      <div class="work-item" data-drive="https://drive.google.com/drive/folders/1broadcast-bts">
-        <img src="https://placehold.co/800x500/191919/C6A85B?text=Behind+The+Scene" alt="Behind The Scene Produksi Konten Broadcasting">
-        <div class="work-overlay">
-          <span>Behind The Scene</span>
-        </div>
-        <div class="work-caption">Produksi Konten</div>
-      </div>
-      <div class="work-item" data-drive="https://drive.google.com/drive/folders/1broadcast-podcast">
-        <img src="https://placehold.co/800x500/191919/E5D3A1?text=Podcast+Session" alt="Podcast Session Broadcasting">
-        <div class="work-overlay">
-          <span>Podcast Session</span>
-        </div>
-        <div class="work-caption">Talkshow Kreatif</div>
+    <div id="worksGridContainer" class="works-grid">
+      <div class="loading-spinner" style="text-align:center; grid-column:1/-1; padding:60px;">
+        <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:#C6A85B;"></i>
+        <p style="margin-top:16px; color:#A1A1AA;">Memuat dokumentasi...</p>
       </div>
     </div>
   </div>
@@ -332,6 +308,91 @@
   </div>
 </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ==================== SUPABASE CONFIGURATION ====================
+  // GANTI DENGAN PROJECT SUPABASE KAMU!
+  const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
+  
+  // Gunakan nama variabel unik untuk hindari konflik
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  // ==================== LOAD WORKS FROM SUPABASE ====================
+  async function loadWorksFromSupabase() {
+    const container = document.getElementById('worksGridContainer');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading-spinner" style="text-align:center; grid-column:1/-1; padding:60px;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:#C6A85B;"></i><p style="margin-top:16px; color:#A1A1AA;">Memuat dokumentasi...</p></div>';
+    
+    try {
+      const { data, error } = await supabaseClient
+        .from('events')
+        .select('*')
+        .order('event_date', { ascending: false })
+        .limit(6); // Batasi 6 dokumentasi terbaru di halaman utama
+      
+      if (error) throw error;
+      
+      if (!data || data.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="text-align:center; grid-column:1/-1; padding:60px;">
+            <i class="fas fa-camera" style="font-size:3rem; color:#C6A85B; opacity:0.5;"></i>
+            <p style="margin-top:16px; color:#A1A1AA;">Belum ada dokumentasi</p>
+            <p style="font-size:0.8rem; color:#666;">Dokumentasi akan segera ditambahkan</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Render data dari Supabase
+      container.innerHTML = data.map(event => `
+        <div class="work-item" data-drive="${escapeHtml(event.drive_link)}">
+          <img src="${escapeHtml(event.thumbnail || 'https://placehold.co/800x500/191919/C6A85B?text=' + encodeURIComponent(event.title))}" 
+               alt="${escapeHtml(event.title)} - Dokumentasi Broadcasting SMK Texar"
+               loading="lazy">
+          <div class="work-overlay">
+            <span>${escapeHtml(event.title)}</span>
+          </div>
+          <div class="work-caption">${escapeHtml(event.description || event.title)}</div>
+        </div>
+      `).join('');
+      
+      // Tambahkan event listener untuk klik buka Google Drive
+      document.querySelectorAll('.work-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const driveLink = item.dataset.drive;
+          if (driveLink) window.open(driveLink, '_blank');
+        });
+      });
+      
+    } catch (error) {
+      console.error('Error loading works:', error);
+      container.innerHTML = `
+        <div class="error-state" style="text-align:center; grid-column:1/-1; padding:60px;">
+          <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:#ff6b6b;"></i>
+          <p style="margin-top:16px; color:#A1A1AA;">Gagal memuat dokumentasi</p>
+        </div>
+      `;
+    }
+  }
+  
+  // ==================== UTILITY FUNCTIONS ====================
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  
+  // ==================== INITIALIZE ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    loadWorksFromSupabase();
+  });
+</script>
 <script src="assets/js/home.js"></script>
 </body>
 </html>
