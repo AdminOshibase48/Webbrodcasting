@@ -94,8 +94,18 @@
       background: #E5D3A1;
       transform: translateY(-2px);
     }
+    .login-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
     .error-message {
       color: #ff6b6b;
+      font-size: 0.8rem;
+      margin-top: 16px;
+      display: none;
+    }
+    .success-message {
+      color: #51cf66;
       font-size: 0.8rem;
       margin-top: 16px;
       display: none;
@@ -110,20 +120,29 @@
     .back-link:hover {
       color: #C6A85B;
     }
+    .debug-info {
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      font-size: 0.7rem;
+      color: #666;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="admin-login">
     <div class="login-card">
       <div class="login-logo">
-        <img src="../assets/gambar/favicon.png" alt="Logo">
+        <img src="assets/logo.png" alt="Logo">
       </div>
       <h2>Admin Panel</h2>
       <p>Broadcasting SMK Texar Karawang</p>
       
       <div class="input-group">
         <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="admin@broadcasting.com">
+        <input type="email" id="loginEmail" placeholder="admin@broadcasting.com" value="admin@broadcasting.com">
       </div>
       <div class="input-group">
         <label>Password</label>
@@ -132,47 +151,135 @@
       
       <button class="login-btn" id="loginBtn">Login →</button>
       <div class="error-message" id="errorMessage"></div>
-      <a href=".../index.html" class="back-link">← Kembali ke Website</a>
+      <div class="success-message" id="successMessage"></div>
+      <a href="index.html" class="back-link">← Kembali ke Website</a>
+      
+      <!-- Debug info (optional) -->
+      <div class="debug-info" id="debugInfo">
+        <strong>Debug Info:</strong><br>
+        <span id="debugText"></span>
+      </div>
     </div>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // ⚠️ GANTI DENGAN KONFIGURASI SUPABASE KAMU ⚠️
     const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
+    
+    console.log('Supabase URL:', SUPABASE_URL);
+    console.log('Supabase Key:', SUPABASE_KEY ? 'OK' : 'MISSING');
+    
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      const errorMsg = document.getElementById('errorMessage');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const errorMsg = document.getElementById('errorMessage');
+    const successMsg = document.getElementById('successMessage');
+    const debugInfo = document.getElementById('debugInfo');
+    const debugText = document.getElementById('debugText');
+    
+    // Show debug (hapus comment untuk debugging)
+    // debugInfo.style.display = 'block';
+    
+    async function testConnection() {
+      debugText.innerHTML = 'Mencoba koneksi ke Supabase...';
+      try {
+        const { data, error } = await supabase.from('events').select('count', { count: 'exact', head: true });
+        if (error) {
+          debugText.innerHTML = `Koneksi error: ${error.message}`;
+        } else {
+          debugText.innerHTML = '✅ Koneksi ke Supabase BERHASIL!';
+        }
+      } catch (err) {
+        debugText.innerHTML = `❌ Gagal konek: ${err.message}`;
+      }
+    }
+    
+    // testConnection();
+    
+    async function handleLogin() {
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
       
+      // Reset messages
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+      
+      // Validasi
       if (!email || !password) {
         errorMsg.style.display = 'block';
-        errorMsg.textContent = 'Email dan password wajib diisi';
+        errorMsg.textContent = 'Email dan password wajib diisi!';
         return;
       }
       
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Memproses...';
+      
       try {
+        console.log('Mencoba login dengan email:', email);
+        
+        // Coba login dengan Supabase Auth
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email,
           password: password
         });
         
-        if (error) throw error;
+        console.log('Response:', data, error);
         
-        if (data.session) {
-          localStorage.setItem('admin_token', data.session.access_token);
-          window.location.href = 'admin-panel.html';
+        if (error) {
+          throw error;
         }
+        
+        if (data && data.session) {
+          // Login sukses
+          successMsg.style.display = 'block';
+          successMsg.textContent = 'Login berhasil! Mengalihkan...';
+          
+          localStorage.setItem('admin_token', data.session.access_token);
+          localStorage.setItem('admin_user', JSON.stringify(data.user));
+          
+          setTimeout(() => {
+            window.location.href = 'admin-panel.html';
+          }, 1000);
+        } else {
+          throw new Error('Tidak ada session yang diterima');
+        }
+        
       } catch (error) {
+        console.error('Login error detail:', error);
+        
+        let errorMessage = 'Login gagal. ';
+        
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage += 'Email atau password salah!';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage += 'Email belum dikonfirmasi. Cek email kamu untuk verifikasi.';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage += 'Format email tidak valid.';
+        } else {
+          errorMessage += error.message;
+        }
+        
         errorMsg.style.display = 'block';
-        errorMsg.textContent = 'Login gagal. Periksa email dan password Anda.';
+        errorMsg.textContent = errorMessage;
+        
+        // Debug tambahan
+        debugText.innerHTML = `Error: ${error.message}`;
+        debugInfo.style.display = 'block';
+        
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login →';
       }
-    });
+    }
     
-    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    // Event listeners
+    loginBtn.addEventListener('click', handleLogin);
+    loginPassword.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleLogin();
     });
   </script>
 </body>
