@@ -1,45 +1,59 @@
-// Supabase Configuration
+// ==================== KONFIGURASI SUPABASE ====================
+// GANTI DENGAN PROJECT SUPABASE KAMU!
 const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// State
+// Inisialisasi Supabase Client
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ==================== STATE ====================
 let currentTab = 'events';
 let editingItem = null;
+let currentDataType = null;
 
-// Check authentication
+// ==================== CHECK AUTHENTICATION ====================
 async function checkAuth() {
   const token = localStorage.getItem('admin_token');
   if (!token) {
     window.location.href = 'admin.html';
-    return;
+    return false;
   }
   
-  const { data: { user }, error } = await supabase.auth.getUser(token);
+  const { data: { user }, error } = await _supabase.auth.getUser(token);
   if (error || !user) {
     localStorage.removeItem('admin_token');
     window.location.href = 'admin.html';
+    return false;
   }
+  return true;
 }
 
-// Load Events
+// ==================== LOAD EVENTS ====================
 async function loadEvents() {
-  const { data, error } = await supabase
+  const tbody = document.getElementById('eventsTableBody');
+  tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Memuat data...</td></tr>';
+  
+  const { data, error } = await _supabase
     .from('events')
     .select('*')
     .order('event_date', { ascending: false });
   
   if (error) {
     console.error('Error loading events:', error);
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Gagal memuat data</td></tr>';
     return;
   }
   
-  const tbody = document.getElementById('eventsTableBody');
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Belum ada dokumentasi. Klik "Tambah Baru"</td></tr>';
+    return;
+  }
+  
   tbody.innerHTML = data.map(event => `
-    <tr>
+    <tr data-id="${event.id}">
       <td>${escapeHtml(event.title)}</td>
-      <td>${event.event_date ? new Date(event.event_date).toLocaleDateString('id-ID') : '-'}</td>
-      <td><a href="${event.drive_link}" target="_blank" style="color:#C6A85B;">Lihat</a></td>
+      <td>${event.event_date ? formatDate(event.event_date) : '-'}</td>
+      <td><a href="${event.drive_link}" target="_blank" style="color:#C6A85B;">Lihat Drive</a></td>
       <td class="action-buttons">
         <button class="edit-btn" onclick="editEvent('${event.id}')"><i class="fas fa-edit"></i></button>
         <button class="delete-btn" onclick="deleteEvent('${event.id}')"><i class="fas fa-trash"></i></button>
@@ -48,21 +62,29 @@ async function loadEvents() {
   `).join('');
 }
 
-// Load Members
+// ==================== LOAD MEMBERS ====================
 async function loadMembers() {
-  const { data, error } = await supabase
+  const tbody = document.getElementById('membersTableBody');
+  tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Memuat data...</td></tr>';
+  
+  const { data, error } = await _supabase
     .from('members')
     .select('*')
     .order('created_at', { ascending: false });
   
   if (error) {
     console.error('Error loading members:', error);
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Gagal memuat data</td></tr>';
     return;
   }
   
-  const tbody = document.getElementById('membersTableBody');
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Belum ada anggota. Klik "Tambah Baru"</td></tr>';
+    return;
+  }
+  
   tbody.innerHTML = data.map(member => `
-    <tr>
+    <tr data-id="${member.id}">
       <td>${escapeHtml(member.name)}</td>
       <td>${escapeHtml(member.role)}</td>
       <td>${escapeHtml(member.division || '-')}</td>
@@ -74,18 +96,31 @@ async function loadMembers() {
   `).join('');
 }
 
-// Event CRUD
+// ==================== EVENT CRUD ====================
 async function saveEvent(data, id = null) {
   if (id) {
-    const { error } = await supabase
+    const { error } = await _supabase
       .from('events')
-      .update(data)
+      .update({
+        title: data.title,
+        description: data.description,
+        event_date: data.event_date,
+        drive_link: data.drive_link,
+        thumbnail: data.thumbnail,
+        updated_at: new Date()
+      })
       .eq('id', id);
     if (error) throw error;
   } else {
-    const { error } = await supabase
+    const { error } = await _supabase
       .from('events')
-      .insert([data]);
+      .insert([{
+        title: data.title,
+        description: data.description,
+        event_date: data.event_date,
+        drive_link: data.drive_link,
+        thumbnail: data.thumbnail
+      }]);
     if (error) throw error;
   }
   await loadEvents();
@@ -93,45 +128,60 @@ async function saveEvent(data, id = null) {
 
 async function deleteEvent(id) {
   if (confirm('Yakin ingin menghapus dokumentasi ini?')) {
-    const { error } = await supabase
+    const { error } = await _supabase
       .from('events')
       .delete()
       .eq('id', id);
-    if (error) console.error('Error:', error);
-    else await loadEvents();
+    if (error) {
+      alert('Gagal menghapus: ' + error.message);
+    } else {
+      await loadEvents();
+    }
   }
 }
 
 async function editEvent(id) {
-  const { data } = await supabase
+  const { data, error } = await _supabase
     .from('events')
     .select('*')
     .eq('id', id)
     .single();
   
+  if (error) {
+    alert('Gagal mengambil data: ' + error.message);
+    return;
+  }
+  
   if (data) {
-    editingItem = { id, type: 'event', data };
-    openModal('event');
-    document.getElementById('eventTitle').value = data.title;
-    document.getElementById('eventDesc').value = data.description || '';
-    document.getElementById('eventDate').value = data.event_date || '';
-    document.getElementById('eventDrive').value = data.drive_link;
-    document.getElementById('eventThumb').value = data.thumbnail || '';
+    editingItem = { id, type: 'event' };
+    currentDataType = 'event';
+    openModalForEvent(data);
   }
 }
 
-// Member CRUD
+// ==================== MEMBER CRUD ====================
 async function saveMember(data, id = null) {
   if (id) {
-    const { error } = await supabase
+    const { error } = await _supabase
       .from('members')
-      .update(data)
+      .update({
+        name: data.name,
+        role: data.role,
+        division: data.division,
+        photo: data.photo,
+        updated_at: new Date()
+      })
       .eq('id', id);
     if (error) throw error;
   } else {
-    const { error } = await supabase
+    const { error } = await _supabase
       .from('members')
-      .insert([data]);
+      .insert([{
+        name: data.name,
+        role: data.role,
+        division: data.division,
+        photo: data.photo
+      }]);
     if (error) throw error;
   }
   await loadMembers();
@@ -139,56 +189,79 @@ async function saveMember(data, id = null) {
 
 async function deleteMember(id) {
   if (confirm('Yakin ingin menghapus anggota ini?')) {
-    const { error } = await supabase
+    const { error } = await _supabase
       .from('members')
       .delete()
       .eq('id', id);
-    if (error) console.error('Error:', error);
-    else await loadMembers();
+    if (error) {
+      alert('Gagal menghapus: ' + error.message);
+    } else {
+      await loadMembers();
+    }
   }
 }
 
 async function editMember(id) {
-  const { data } = await supabase
+  const { data, error } = await _supabase
     .from('members')
     .select('*')
     .eq('id', id)
     .single();
   
+  if (error) {
+    alert('Gagal mengambil data: ' + error.message);
+    return;
+  }
+  
   if (data) {
-    editingItem = { id, type: 'member', data };
-    openModal('member');
-    document.getElementById('memberName').value = data.name;
-    document.getElementById('memberRole').value = data.role;
-    document.getElementById('memberDivision').value = data.division || '';
-    document.getElementById('memberPhoto').value = data.photo || '';
+    editingItem = { id, type: 'member' };
+    currentDataType = 'member';
+    openModalForMember(data);
   }
 }
 
-// Modal handling
-function openModal(type) {
+// ==================== MODAL HANDLERS ====================
+function openModalForEvent(data = null) {
   const modal = document.getElementById('modal');
   const modalTitle = document.getElementById('modalTitle');
   const modalForm = document.getElementById('modalForm');
   
-  if (type === 'event') {
-    modalTitle.textContent = editingItem ? 'Edit Dokumentasi' : 'Tambah Dokumentasi';
-    modalForm.innerHTML = `
-      <input type="text" id="eventTitle" placeholder="Judul Event" required>
-      <textarea id="eventDesc" placeholder="Deskripsi" rows="3"></textarea>
-      <input type="date" id="eventDate">
-      <input type="url" id="eventDrive" placeholder="Link Google Drive" required>
-      <input type="url" id="eventThumb" placeholder="URL Thumbnail (opsional)">
-    `;
+  if (data) {
+    modalTitle.textContent = 'Edit Dokumentasi';
   } else {
-    modalTitle.textContent = editingItem ? 'Edit Anggota' : 'Tambah Anggota';
-    modalForm.innerHTML = `
-      <input type="text" id="memberName" placeholder="Nama Lengkap" required>
-      <input type="text" id="memberRole" placeholder="Jabatan" required>
-      <input type="text" id="memberDivision" placeholder="Divisi">
-      <input type="url" id="memberPhoto" placeholder="URL Foto (opsional)">
-    `;
+    modalTitle.textContent = 'Tambah Dokumentasi';
   }
+  
+  modalForm.innerHTML = `
+    <input type="text" id="eventTitle" placeholder="Judul Event*" value="${escapeHtml(data?.title || '')}" required>
+    <textarea id="eventDesc" placeholder="Deskripsi" rows="3">${escapeHtml(data?.description || '')}</textarea>
+    <input type="date" id="eventDate" value="${data?.event_date || ''}">
+    <input type="url" id="eventDrive" placeholder="Link Google Drive*" value="${escapeHtml(data?.drive_link || '')}" required>
+    <input type="url" id="eventThumb" placeholder="URL Thumbnail (opsional)" value="${escapeHtml(data?.thumbnail || '')}">
+    <small style="color:#A1A1AA; font-size:0.7rem;">* wajib diisi</small>
+  `;
+  
+  modal.classList.add('active');
+}
+
+function openModalForMember(data = null) {
+  const modal = document.getElementById('modal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalForm = document.getElementById('modalForm');
+  
+  if (data) {
+    modalTitle.textContent = 'Edit Anggota';
+  } else {
+    modalTitle.textContent = 'Tambah Anggota';
+  }
+  
+  modalForm.innerHTML = `
+    <input type="text" id="memberName" placeholder="Nama Lengkap*" value="${escapeHtml(data?.name || '')}" required>
+    <input type="text" id="memberRole" placeholder="Jabatan*" value="${escapeHtml(data?.role || '')}" required>
+    <input type="text" id="memberDivision" placeholder="Divisi" value="${escapeHtml(data?.division || '')}">
+    <input type="url" id="memberPhoto" placeholder="URL Foto (opsional)" value="${escapeHtml(data?.photo || '')}">
+    <small style="color:#A1A1AA; font-size:0.7rem;">* wajib diisi</small>
+  `;
   
   modal.classList.add('active');
 }
@@ -196,92 +269,174 @@ function openModal(type) {
 function closeModal() {
   document.getElementById('modal').classList.remove('active');
   editingItem = null;
+  currentDataType = null;
 }
 
-// Save handler
-document.getElementById('saveBtn').onclick = async () => {
+// ==================== SAVE HANDLER ====================
+async function handleSave() {
   if (currentTab === 'events') {
-    const data = {
-      title: document.getElementById('eventTitle').value,
-      description: document.getElementById('eventDesc').value,
-      event_date: document.getElementById('eventDate').value,
-      drive_link: document.getElementById('eventDrive').value,
-      thumbnail: document.getElementById('eventThumb').value
-    };
+    const title = document.getElementById('eventTitle')?.value;
+    const driveLink = document.getElementById('eventDrive')?.value;
     
-    if (editingItem) {
-      await saveEvent(data, editingItem.id);
-    } else {
-      await saveEvent(data);
+    if (!title || !driveLink) {
+      alert('Judul dan Link Drive wajib diisi!');
+      return;
     }
-  } else {
+    
     const data = {
-      name: document.getElementById('memberName').value,
-      role: document.getElementById('memberRole').value,
-      division: document.getElementById('memberDivision').value,
-      photo: document.getElementById('memberPhoto').value
+      title: title,
+      description: document.getElementById('eventDesc')?.value || '',
+      event_date: document.getElementById('eventDate')?.value || null,
+      drive_link: driveLink,
+      thumbnail: document.getElementById('eventThumb')?.value || null
     };
     
-    if (editingItem) {
-      await saveMember(data, editingItem.id);
-    } else {
-      await saveMember(data);
+    try {
+      if (editingItem && editingItem.type === 'event') {
+        await saveEvent(data, editingItem.id);
+      } else {
+        await saveEvent(data);
+      }
+      closeModal();
+    } catch (error) {
+      alert('Gagal menyimpan: ' + error.message);
+    }
+  } 
+  else if (currentTab === 'members') {
+    const name = document.getElementById('memberName')?.value;
+    const role = document.getElementById('memberRole')?.value;
+    
+    if (!name || !role) {
+      alert('Nama dan Jabatan wajib diisi!');
+      return;
+    }
+    
+    const data = {
+      name: name,
+      role: role,
+      division: document.getElementById('memberDivision')?.value || '',
+      photo: document.getElementById('memberPhoto')?.value || null
+    };
+    
+    try {
+      if (editingItem && editingItem.type === 'member') {
+        await saveMember(data, editingItem.id);
+      } else {
+        await saveMember(data);
+      }
+      closeModal();
+    } catch (error) {
+      alert('Gagal menyimpan: ' + error.message);
     }
   }
-  
-  closeModal();
-  if (currentTab === 'events') await loadEvents();
-  else await loadMembers();
-};
+}
 
-// Tab switching
-document.querySelectorAll('.nav-menu a').forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    const tab = link.dataset.tab;
-    currentTab = tab;
-    
-    document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
-    link.classList.add('active');
-    
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.getElementById(`${tab}Tab`).classList.add('active');
-    
-    const panelTitle = document.getElementById('panelTitle');
-    const addBtn = document.getElementById('addBtn');
-    
-    if (tab === 'events') {
-      panelTitle.textContent = 'Kelola Dokumentasi';
-      addBtn.innerHTML = '+ Tambah Dokumentasi';
-      loadEvents();
-    } else {
-      panelTitle.textContent = 'Kelola Anggota';
-      addBtn.innerHTML = '+ Tambah Anggota';
-      loadMembers();
+// ==================== TAB SWITCHING ====================
+function switchTab(tab) {
+  currentTab = tab;
+  
+  // Update active class on nav
+  document.querySelectorAll('.nav-menu a').forEach(link => {
+    link.classList.remove('active');
+    if (link.dataset.tab === tab) {
+      link.classList.add('active');
     }
   });
-});
+  
+  // Update tab content visibility
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.remove('active');
+  });
+  document.getElementById(`${tab}Tab`).classList.add('active');
+  
+  // Update header title
+  const panelTitle = document.getElementById('panelTitle');
+  const addBtn = document.getElementById('addBtn');
+  
+  if (tab === 'events') {
+    panelTitle.textContent = 'Kelola Dokumentasi';
+    addBtn.innerHTML = '+ Tambah Dokumentasi';
+    loadEvents();
+  } else {
+    panelTitle.textContent = 'Kelola Anggota';
+    addBtn.innerHTML = '+ Tambah Anggota';
+    loadMembers();
+  }
+}
 
-document.getElementById('addBtn').onclick = () => {
+// ==================== ADD BUTTON HANDLER ====================
+function handleAdd() {
   editingItem = null;
-  openModal(currentTab === 'events' ? 'event' : 'member');
-};
+  if (currentTab === 'events') {
+    openModalForEvent();
+  } else {
+    openModalForMember();
+  }
+}
 
-document.getElementById('logoutBtn').onclick = () => {
+// ==================== LOGOUT ====================
+function handleLogout() {
   localStorage.removeItem('admin_token');
+  localStorage.removeItem('admin_user');
   window.location.href = 'admin.html';
-};
+}
+
+// ==================== UTILITY FUNCTIONS ====================
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+}
 
 function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-  });
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
-// Initialize
-checkAuth();
-loadEvents();
+// ==================== EVENT LISTENERS ====================
+document.addEventListener('DOMContentLoaded', async () => {
+  const isAuth = await checkAuth();
+  if (!isAuth) return;
+  
+  // Tab listeners
+  document.querySelectorAll('.nav-menu a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab(link.dataset.tab);
+    });
+  });
+  
+  // Add button
+  document.getElementById('addBtn').addEventListener('click', handleAdd);
+  
+  // Save button
+  document.getElementById('saveBtn').addEventListener('click', handleSave);
+  
+  // Logout button
+  document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+  
+  // Close modal on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+  
+  // Close modal when clicking outside
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal')) closeModal();
+  });
+  
+  // Load initial data
+  await loadEvents();
+});
+
+// Make functions global for onclick handlers
+window.editEvent = editEvent;
+window.deleteEvent = deleteEvent;
+window.editMember = editMember;
+window.deleteMember = deleteMember;
+window.closeModal = closeModal;
