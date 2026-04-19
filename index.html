@@ -311,67 +311,105 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ==================== SUPABASE CONFIGURATION ====================
-  // GANTI DENGAN PROJECT SUPABASE KAMU!
+  // ⚠️ GANTI DENGAN PROJECT SUPABASE KAMU! ⚠️
   const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
   
-  // Gunakan nama variabel unik untuk hindari konflik
+  // Inisialisasi Supabase Client
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   
   // ==================== LOAD WORKS FROM SUPABASE ====================
   async function loadWorksFromSupabase() {
     const container = document.getElementById('worksGridContainer');
-    if (!container) return;
+    if (!container) {
+      console.error('Container worksGridContainer tidak ditemukan!');
+      return;
+    }
     
-    container.innerHTML = '<div class="loading-spinner" style="text-align:center; grid-column:1/-1; padding:60px;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:#C6A85B;"></i><p style="margin-top:16px; color:#A1A1AA;">Memuat dokumentasi...</p></div>';
+    console.log('Loading works from Supabase...');
+    
+    // Tampilkan loading
+    container.innerHTML = `
+      <div style="text-align:center; grid-column:1/-1; padding:60px;">
+        <i class="fas fa-spinner fa-pulse" style="font-size:2rem; color:#C6A85B;"></i>
+        <p style="margin-top:16px; color:#A1A1AA;">Memuat dokumentasi...</p>
+      </div>
+    `;
     
     try {
+      // Ambil data dari Supabase
       const { data, error } = await supabaseClient
         .from('events')
         .select('*')
         .order('event_date', { ascending: false })
-        .limit(6); // Batasi 6 dokumentasi terbaru di halaman utama
+        .limit(6);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
+      console.log('Data dari Supabase:', data);
+      
+      // Jika tidak ada data
       if (!data || data.length === 0) {
         container.innerHTML = `
-          <div class="empty-state" style="text-align:center; grid-column:1/-1; padding:60px;">
+          <div style="text-align:center; grid-column:1/-1; padding:60px;">
             <i class="fas fa-camera" style="font-size:3rem; color:#C6A85B; opacity:0.5;"></i>
             <p style="margin-top:16px; color:#A1A1AA;">Belum ada dokumentasi</p>
-            <p style="font-size:0.8rem; color:#666;">Dokumentasi akan segera ditambahkan</p>
+            <p style="font-size:0.8rem; color:#666;">Tambahkan dokumentasi melalui <a href="admin-panel.html" style="color:#C6A85B;">Admin Panel</a></p>
           </div>
         `;
         return;
       }
       
-      // Render data dari Supabase
-      container.innerHTML = data.map(event => `
-        <div class="work-item" data-drive="${escapeHtml(event.drive_link)}">
-          <img src="${escapeHtml(event.thumbnail || 'https://placehold.co/800x500/191919/C6A85B?text=' + encodeURIComponent(event.title))}" 
-               alt="${escapeHtml(event.title)} - Dokumentasi Broadcasting SMK Texar"
-               loading="lazy">
-          <div class="work-overlay">
-            <span>${escapeHtml(event.title)}</span>
+      // Render data ke HTML
+      let html = '';
+      for (const event of data) {
+        const title = escapeHtml(event.title);
+        const description = escapeHtml(event.description || event.title);
+        const driveLink = event.drive_link;
+        const thumbnail = event.thumbnail || `https://placehold.co/800x500/191919/C6A85B?text=${encodeURIComponent(title)}`;
+        
+        html += `
+          <div class="work-item" data-drive="${driveLink}">
+            <img src="${thumbnail}" alt="${title} - Dokumentasi Broadcasting SMK Texar" loading="lazy" onerror="this.src='https://placehold.co/800x500/191919/ff6b6b?text=Image+Not+Found'">
+            <div class="work-overlay">
+              <span>${title}</span>
+            </div>
+            <div class="work-caption">${description}</div>
           </div>
-          <div class="work-caption">${escapeHtml(event.description || event.title)}</div>
-        </div>
-      `).join('');
+        `;
+      }
+      
+      container.innerHTML = html;
       
       // Tambahkan event listener untuk klik buka Google Drive
       document.querySelectorAll('.work-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const driveLink = item.dataset.drive;
-          if (driveLink) window.open(driveLink, '_blank');
+        item.addEventListener('click', (e) => {
+          // Jangan trigger jika klik dari dalam overlay (tapi overlay juga boleh)
+          const driveLink = item.getAttribute('data-drive');
+          if (driveLink) {
+            window.open(driveLink, '_blank');
+          } else {
+            console.warn('Tidak ada link drive untuk item ini');
+          }
         });
+        
+        // Tambah style cursor pointer biar jelas bisa diklik
+        item.style.cursor = 'pointer';
       });
+      
+      console.log('Works berhasil dirender, jumlah:', data.length);
       
     } catch (error) {
       console.error('Error loading works:', error);
       container.innerHTML = `
-        <div class="error-state" style="text-align:center; grid-column:1/-1; padding:60px;">
+        <div style="text-align:center; grid-column:1/-1; padding:60px;">
           <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:#ff6b6b;"></i>
           <p style="margin-top:16px; color:#A1A1AA;">Gagal memuat dokumentasi</p>
+          <p style="font-size:0.8rem; color:#666; margin-top:8px;">${error.message}</p>
+          <button onclick="loadWorksFromSupabase()" style="margin-top:16px; padding:8px 24px; background:#C6A85B; border:none; border-radius:40px; color:#050505; cursor:pointer;">Coba Lagi</button>
         </div>
       `;
     }
@@ -388,9 +426,43 @@
       .replace(/'/g, '&#39;');
   }
   
+  // ==================== CEK KONEKSI SUPABASE ====================
+  async function testSupabaseConnection() {
+    try {
+      const { data, error } = await supabaseClient.from('events').select('count', { count: 'exact', head: true });
+      if (error) {
+        console.error('Koneksi Supabase GAGAL:', error.message);
+        return false;
+      }
+      console.log('✅ Koneksi Supabase BERHASIL!');
+      return true;
+    } catch (err) {
+      console.error('Koneksi Supabase GAGAL:', err.message);
+      return false;
+    }
+  }
+  
   // ==================== INITIALIZE ====================
-  document.addEventListener('DOMContentLoaded', () => {
-    loadWorksFromSupabase();
+  document.addEventListener('DOMContentLoaded', async () => {
+    console.log('DOM loaded, initializing...');
+    
+    // Cek koneksi dulu
+    const isConnected = await testSupabaseConnection();
+    
+    if (isConnected) {
+      await loadWorksFromSupabase();
+    } else {
+      const container = document.getElementById('worksGridContainer');
+      if (container) {
+        container.innerHTML = `
+          <div style="text-align:center; grid-column:1/-1; padding:60px;">
+            <i class="fas fa-database" style="font-size:3rem; color:#ff6b6b; opacity:0.5;"></i>
+            <p style="margin-top:16px; color:#ff6b6b;">Gagal terhubung ke database</p>
+            <p style="font-size:0.8rem; color:#666;">Periksa konfigurasi Supabase URL dan KEY</p>
+          </div>
+        `;
+      }
+    }
   });
 </script>
 <script src="assets/js/home.js"></script>
