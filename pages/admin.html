@@ -165,13 +165,16 @@
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ⚠️ GANTI DENGAN KONFIGURASI SUPABASE KAMU ⚠️
+  // JANGAN PAKAI console.log yang nampilin data sensitif!
+  
   const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
   
-  // Gunakan variabel berbeda atau langsung inisialisasi
+  // Inisialisasi tanpa console.log
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   
-  console.log('Supabase URL:', SUPABASE_URL);
+  // Hapus semua console.log yang nampilin URL/KEY!
+  // Jangan pakai: console.log(SUPABASE_URL)
   
   const loginBtn = document.getElementById('loginBtn');
   const loginEmail = document.getElementById('loginEmail');
@@ -196,14 +199,16 @@
     loginBtn.textContent = 'Memproses...';
     
     try {
-      console.log('Mencoba login dengan email:', email);
+      // Hapus console.log yang nampilin email
+      // console.log('Mencoba login...'); // Boleh ini aja yang general
       
       const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
       });
       
-      console.log('Response:', data, error);
+      // Hapus console.log yang nampilin response detail
+      // console.log('Response:', data, error);
       
       if (error) throw error;
       
@@ -222,14 +227,12 @@
       }
       
     } catch (error) {
-      console.error('Login error detail:', error);
-      
       let errorMessage = 'Login gagal. ';
       
       if (error.message.includes('Invalid login credentials')) {
         errorMessage += 'Email atau password salah!';
       } else if (error.message.includes('Email not confirmed')) {
-        errorMessage += 'Email belum dikonfirmasi. Cek email kamu untuk verifikasi.';
+        errorMessage += 'Email belum dikonfirmasi.';
       } else {
         errorMessage += error.message;
       }
