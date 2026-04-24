@@ -85,24 +85,19 @@
 </head>
 <body>
 
+<body>
+
+<!-- ==================== CAPTCHA SESSION CHECK ==================== -->
 <script>
-    // ==================== CAPTCHA CHECK ====================
-    // Cek apakah sudah terverifikasi
+    // Cek apakah sudah terverifikasi (hanya 1x per sesi browser)
     function isCaptchaVerified() {
-        // Cek session storage
-        if (sessionStorage.getItem('captcha_verified') === 'true') {
-            return true;
-        }
-        // Cek cookie
-        if (document.cookie.includes('captcha_verified=true')) {
-            return true;
-        }
+        if (sessionStorage.getItem('captcha_verified') === 'true') return true;
+        if (document.cookie.includes('captcha_verified=true')) return true;
         return false;
     }
     
     // Jika belum terverifikasi, redirect ke halaman captcha
     if (!isCaptchaVerified()) {
-        // Hindari infinite redirect
         const currentPage = window.location.pathname.split('/').pop();
         if (currentPage !== 'captcha-check.html') {
             window.location.href = 'captcha-check.html';
