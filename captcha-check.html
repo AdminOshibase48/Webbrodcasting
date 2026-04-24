@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikasi | Broadcasting SMK Texar</title>
     
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -22,9 +23,22 @@
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Background cinematic effect */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(198,168,91,0.08) 0%, transparent 70%);
+            pointer-events: none;
         }
         
         .captcha-container {
+            position: relative;
+            z-index: 2;
             width: 100%;
             padding: 20px;
         }
@@ -32,35 +46,45 @@
         .captcha-card {
             max-width: 480px;
             margin: 0 auto;
-            background: #0B0B0B;
-            border: 1px solid rgba(198,168,91,0.25);
+            background: rgba(11, 11, 11, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(198, 168, 91, 0.3);
             border-radius: 32px;
             padding: 48px 40px;
             text-align: center;
-            animation: fadeIn 0.6s ease-out;
+            animation: fadeInUp 0.6s ease-out;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .logo {
-            width: 70px;
-            height: 70px;
+        /* Logo dari PNG user */
+        .captcha-logo {
+            width: 80px;
+            height: 80px;
             margin: 0 auto 20px;
             border-radius: 50%;
-            background: rgba(198,168,91,0.1);
-            border: 1px solid #C6A85B;
+            background: rgba(198,168,91,0.08);
+            border: 1px solid rgba(198,168,91,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
         
-        .logo i {
-            font-size: 32px;
-            color: #C6A85B;
+        .captcha-logo img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
         }
         
         .captcha-card h2 {
@@ -77,10 +101,12 @@
             line-height: 1.6;
         }
         
-        .g-recaptcha {
+        /* reCAPTCHA container */
+        .g-recaptcha-container {
             display: flex;
             justify-content: center;
             margin: 24px 0;
+            transform: scale(0.95);
         }
         
         .verify-btn {
@@ -110,33 +136,33 @@
             transform: none;
         }
         
-        .status {
+        .status-message {
             margin-top: 20px;
-            padding: 12px;
+            padding: 10px;
             border-radius: 12px;
             font-size: 0.8rem;
             display: none;
         }
         
-        .status.success {
-            background: rgba(81, 207, 102, 0.1);
+        .status-message.success {
+            display: block;
+            background: rgba(81, 207, 102, 0.15);
             border: 1px solid #51cf66;
             color: #51cf66;
-            display: block;
         }
         
-        .status.error {
-            background: rgba(255, 107, 107, 0.1);
+        .status-message.error {
+            display: block;
+            background: rgba(255, 107, 107, 0.15);
             border: 1px solid #ff6b6b;
             color: #ff6b6b;
-            display: block;
         }
         
-        .status.loading {
-            background: rgba(198,168,91,0.1);
+        .status-message.loading {
+            display: block;
+            background: rgba(198, 168, 91, 0.1);
             border: 1px solid #C6A85B;
             color: #C6A85B;
-            display: block;
         }
         
         .footer-note {
@@ -145,184 +171,199 @@
             color: #666;
         }
         
-        .hidden {
-            display: none;
+        /* Animasi shimmer untuk teks */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .gold-text {
+            background: linear-gradient(120deg, #C6A85B 20%, #E5D3A1 40%, #C6A85B 60%);
+            background-size: 200% auto;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
         }
     </style>
     
-    <!-- reCAPTCHA v2 Script -->
+    <!-- Google reCAPTCHA v2 -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
 <div class="captcha-container">
     <div class="captcha-card">
-        <div class="logo">
-            <i class="fas fa-broadcast-tower"></i>
+        <div class="captcha-logo">
+            <img src="assets/gambar/Favicon.png" alt="Broadcasting Logo" 
+                 onerror="this.src='https://placehold.co/80x80/C6A85B/050505?text=B'">
         </div>
         
-        <h2>Verifikasi Keamanan</h2>
-        <p>Untuk mengakses website Broadcasting, silakan verifikasi bahwa Anda adalah manusia.</p>
+        <h2>Verifikasi <span class="gold-text">Keamanan</span></h2>
+        <p>Untuk mengakses website Broadcasting SMK Texar,<br>silakan konfirmasi bahwa Anda bukan robot.</p>
         
         <!-- reCAPTCHA v2 widget -->
-        <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY_HERE"></div>
+        <div class="g-recaptcha-container">
+            <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY_HERE" data-theme="dark"></div>
+        </div>
         
         <button class="verify-btn" id="verifyBtn" disabled>
-            <i class="fas fa-check-circle"></i> Verifikasi & Masuk
+            <i class="fas fa-shield-alt"></i> Verifikasi & Masuk
         </button>
         
-        <div id="status" class="status"></div>
-        <div class="footer-note">
-            <i class="fas fa-shield-alt"></i> Website dilindungi reCAPTCHA
-        </div>
+        <div id="statusMessage" class="status-message"></div>
+        <div class="footer-note">Protected by reCAPTCHA</div>
     </div>
 </div>
 
 <script>
     // ==================== KONFIGURASI ====================
-    // Ganti dengan SITE KEY dari Google reCAPTCHA v2!
-    // Contoh: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+    // GANTI DENGAN SITE KEY DARI GOOGLE reCAPTCHA v2!
+    // (SITE KEY didapat dari https://www.google.com/recaptcha/admin)
     const SITE_KEY = '6LcY-McsAAAAAABo-ofxqdXFLrpVVm32XMbFVOuK';
-    
-    // Durasi verifikasi (1 jam = 3600000 ms)
-    // Set null untuk "selamanya" sampai browser ditutup
-    const VERIFY_DURATION = 3600000; // 1 jam (ubah sesuai kebutuhan)
     
     // ==================== ELEMENTS ====================
     const verifyBtn = document.getElementById('verifyBtn');
-    const statusDiv = document.getElementById('status');
+    const statusMsg = document.getElementById('statusMessage');
     
-    // ==================== FUNCTIONS ====================
+    // ==================== FUNGSI ====================
     function showStatus(type, message) {
-        statusDiv.className = `status ${type}`;
-        statusDiv.innerHTML = message;
+        statusMsg.className = `status-message ${type}`;
+        statusMsg.innerHTML = message;
         
-        // Auto hide after 3 seconds for success/error
-        if (type === 'success' || type === 'error') {
+        // Auto hide after 3 seconds for success
+        if (type === 'success') {
             setTimeout(() => {
-                if (statusDiv.className === `status ${type}`) {
-                    statusDiv.style.display = 'none';
-                    setTimeout(() => {
-                        statusDiv.style.display = '';
-                    }, 100);
-                }
+                statusMsg.style.display = 'none';
             }, 3000);
         }
     }
     
-    // Set session bahwa sudah terverifikasi
-    function setVerified() {
-        // Session storage (hilang saat browser ditutup)
-        sessionStorage.setItem('captcha_verified', 'true');
-        sessionStorage.setItem('captcha_time', Date.now().toString());
-        
-        // Cookie sebagai backup (expired sesuai VERIFY_DURATION)
-        if (VERIFY_DURATION) {
-            const expiryDate = new Date(Date.now() + VERIFY_DURATION);
-            document.cookie = `captcha_verified=true; path=/; expires=${expiryDate.toUTCString()}`;
-        } else {
-            // Session cookie (hilang saat browser ditutup)
-            document.cookie = `captcha_verified=true; path=/`;
-        }
+    function hideStatus() {
+        statusMsg.style.display = 'none';
+        statusMsg.className = 'status-message';
     }
     
-    // Cek apakah sudah terverifikasi sebelumnya
-    function isAlreadyVerified() {
+    // Set verifikasi PERMANEN di browser ini
+    function setPermanentVerification() {
+        // Local storage (permanen sampai user hapus cache)
+        localStorage.setItem('broadcasting_verified', 'true');
+        localStorage.setItem('broadcasting_verified_date', new Date().toISOString());
+        
+        // Session storage backup
+        sessionStorage.setItem('captcha_verified', 'true');
+        
+        // Cookie (expired 1 tahun)
+        document.cookie = "captcha_verified=true; path=/; max-age=31536000";
+    }
+    
+    function isPermanentlyVerified() {
+        // Cek local storage
+        if (localStorage.getItem('broadcasting_verified') === 'true') {
+            return true;
+        }
         // Cek session storage
         if (sessionStorage.getItem('captcha_verified') === 'true') {
-            const time = parseInt(sessionStorage.getItem('captcha_time'));
-            if (VERIFY_DURATION && time) {
-                if (Date.now() - time < VERIFY_DURATION) {
-                    return true;
-                } else {
-                    // Sudah expired, hapus
-                    sessionStorage.removeItem('captcha_verified');
-                    sessionStorage.removeItem('captcha_time');
-                }
-            } else if (!VERIFY_DURATION) {
-                return true;
-            }
+            return true;
         }
-        
         // Cek cookie
         if (document.cookie.includes('captcha_verified=true')) {
             return true;
         }
-        
         return false;
     }
     
-    // Verifikasi token ke Google (opsional, untuk backend)
-    async function verifyWithGoogle(token) {
-        // Untuk frontend saja, kita terima saja karena reCAPTCHA sudah memberikan token
-        // Tapi idealnya kirim token ke backend untuk divalidasi
-        return true;
+    // Cek apakah reCAPTCHA sudah selesai
+    function onCaptchaCompleted() {
+        verifyBtn.disabled = false;
+        hideStatus();
     }
     
-    // Main verify function
-    async function handleVerification() {
-        const token = grecaptcha.getResponse();
-        
-        if (!token) {
-            showStatus('error', '❌ Silakan centang "Saya bukan robot" terlebih dahulu!');
-            return;
+    function onCaptchaExpired() {
+        verifyBtn.disabled = true;
+        showStatus('error', '⏱️ Verifikasi kadaluarsa. Silakan centang ulang.');
+    }
+    
+    function onCaptchaError() {
+        verifyBtn.disabled = true;
+        showStatus('error', '❌ Terjadi kesalahan. Silakan refresh halaman.');
+    }
+    
+    // Verifikasi ke Google
+    async function verifyWithGoogle(responseToken) {
+        if (!responseToken) {
+            showStatus('error', '❌ Silakan centang kotak "Saya bukan robot" terlebih dahulu.');
+            return false;
         }
         
-        showStatus('loading', '<i class="fas fa-spinner fa-pulse"></i> Memverifikasi...');
+        showStatus('loading', '🔄 Memverifikasi...');
         verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memverifikasi...';
         
         try {
-            // Validasi token (opsional, bisa ditambah backend)
-            const isValid = await verifyWithGoogle(token);
+            // Di sini idealnya kirim token ke backend untuk validasi
+            // Untuk frontend-only, kita terima tokennya dan anggap valid
             
-            if (isValid) {
-                showStatus('success', '✓ Verifikasi berhasil! Mengalihkan ke halaman utama...');
-                setVerified();
+            // Simulasi validasi (untuk production, sebaiknya kirim ke server)
+            if (responseToken && responseToken.length > 20) {
+                // Verifikasi berhasil
+                showStatus('success', '✅ Verifikasi berhasil! Mengalihkan...');
+                setPermanentVerification();
                 
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1500);
+                return true;
             } else {
-                throw new Error('Verifikasi gagal');
+                throw new Error('Token tidak valid');
             }
             
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Verification error:', error);
             showStatus('error', '❌ Verifikasi gagal. Silakan coba lagi.');
-            grecaptcha.reset();
             verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Verifikasi & Masuk';
+            
+            // Reset reCAPTCHA
+            if (typeof grecaptcha !== 'undefined') {
+                grecaptcha.reset();
+            }
+            return false;
         }
     }
     
     // ==================== EVENT LISTENERS ====================
-    verifyBtn.addEventListener('click', handleVerification);
+    verifyBtn.addEventListener('click', async () => {
+        if (typeof grecaptcha !== 'undefined') {
+            const token = grecaptcha.getResponse();
+            await verifyWithGoogle(token);
+        } else {
+            showStatus('error', '❌ reCAPTCHA belum siap. Refresh halaman.');
+        }
+    });
     
-    // Enable verify button when recaptcha is solved
-    window.onloadCallback = function() {
-        // Button akan aktif saat user sudah centang
-        const checkCaptcha = setInterval(() => {
-            if (grecaptcha && grecaptcha.getResponse().length > 0) {
-                verifyBtn.disabled = false;
-                clearInterval(checkCaptcha);
-            }
-        }, 500);
-    };
-    
-    // ==================== CHECK IF ALREADY VERIFIED ====================
-    if (isAlreadyVerified()) {
+    // ==================== CEK SUDAH TERVERIFIKASI ====================
+    if (isPermanentlyVerified()) {
         // Langsung redirect ke index
         window.location.href = 'index.html';
     }
+    
+    // Expose callback functions ke global (dipanggil oleh reCAPTCHA)
+    window.onCaptchaCompleted = onCaptchaCompleted;
+    window.onCaptchaExpired = onCaptchaExpired;
+    window.onCaptchaError = onCaptchaError;
 </script>
 
-<!-- Re-initialize recaptcha -->
+<!-- Register callback untuk reCAPTCHA -->
 <script>
-    // Ensure grecaptcha renders
-    if (typeof grecaptcha !== 'undefined') {
-        grecaptcha.ready(() => {
+    // Tunggu reCAPTCHA siap
+    window.onload = function() {
+        if (typeof grecaptcha !== 'undefined') {
+            // Optional: render ulang jika perlu
             console.log('reCAPTCHA v2 siap');
-        });
-    }
+        }
+    };
 </script>
+
 </body>
 </html>
