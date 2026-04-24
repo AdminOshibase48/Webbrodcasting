@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         closeBtn.addEventListener('click', () => {
             banner.classList.add('hide');
-            sessionStorage.setItem('announcement_closed', 'true');
+            sessionStorage.setItem('announcement_closed', 'false');
             setTimeout(() => {
                 banner.style.display = 'none';
             }, 400);
