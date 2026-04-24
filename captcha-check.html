@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi | Broadcasting SMK Texar</title>
+    <title>Verifikasi Manusia | Broadcasting SMK Texar</title>
     
-    <!-- Fonts & Icons -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -27,7 +27,7 @@
             overflow: hidden;
         }
         
-        /* Background cinematic effect */
+        /* Cinematic background effect */
         body::before {
             content: '';
             position: absolute;
@@ -40,20 +40,9 @@
             position: relative;
             z-index: 2;
             width: 100%;
-            padding: 20px;
-        }
-        
-        .captcha-card {
-            max-width: 480px;
-            margin: 0 auto;
-            background: rgba(11, 11, 11, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(198, 168, 91, 0.3);
-            border-radius: 32px;
-            padding: 48px 40px;
-            text-align: center;
+            max-width: 500px;
+            margin: 20px;
             animation: fadeInUp 0.6s ease-out;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
         
         @keyframes fadeInUp {
@@ -67,14 +56,23 @@
             }
         }
         
-        /* Logo dari PNG user */
+        .captcha-card {
+            background: rgba(11, 11, 11, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(198, 168, 91, 0.3);
+            border-radius: 32px;
+            padding: 48px 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        
         .captcha-logo {
             width: 80px;
             height: 80px;
-            margin: 0 auto 20px;
+            margin: 0 auto 24px;
             border-radius: 50%;
-            background: rgba(198,168,91,0.08);
-            border: 1px solid rgba(198,168,91,0.3);
+            background: rgba(198,168,91,0.1);
+            border: 1.5px solid #C6A85B;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -82,8 +80,8 @@
         }
         
         .captcha-logo img {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
         }
         
@@ -92,6 +90,7 @@
             color: #C6A85B;
             font-size: 1.8rem;
             margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
         
         .captcha-card p {
@@ -138,52 +137,61 @@
         
         .status-message {
             margin-top: 20px;
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
             font-size: 0.8rem;
             display: none;
         }
         
         .status-message.success {
-            display: block;
-            background: rgba(81, 207, 102, 0.15);
+            background: rgba(81, 207, 102, 0.1);
             border: 1px solid #51cf66;
             color: #51cf66;
+            display: block;
         }
         
         .status-message.error {
-            display: block;
-            background: rgba(255, 107, 107, 0.15);
+            background: rgba(255, 107, 107, 0.1);
             border: 1px solid #ff6b6b;
             color: #ff6b6b;
+            display: block;
         }
         
         .status-message.loading {
-            display: block;
             background: rgba(198, 168, 91, 0.1);
             border: 1px solid #C6A85B;
             color: #C6A85B;
+            display: block;
         }
         
-        .footer-note {
-            margin-top: 24px;
+        .retry-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #A1A1AA;
+            font-size: 0.7rem;
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        
+        .retry-link:hover {
+            color: #C6A85B;
+        }
+        
+        .footer-badge {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
             font-size: 0.6rem;
-            color: #666;
+            color: #4a4a5a;
+            z-index: 2;
         }
         
-        /* Animasi shimmer untuk teks */
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        .gold-text {
-            background: linear-gradient(120deg, #C6A85B 20%, #E5D3A1 40%, #C6A85B 60%);
-            background-size: 200% auto;
-            color: transparent;
-            background-clip: text;
-            -webkit-background-clip: text;
-            animation: shimmer 3s ease-in-out infinite;
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
     </style>
     
@@ -195,16 +203,21 @@
 <div class="captcha-container">
     <div class="captcha-card">
         <div class="captcha-logo">
-            <img src="assets/gambar/Favicon.png" alt="Broadcasting Logo" 
-                 onerror="this.src='https://placehold.co/80x80/C6A85B/050505?text=B'">
+            <img src="assets/gambar/favicon.png" alt="Broadcasting Logo" 
+                 onerror="this.src='https://placehold.co/80x80/2A2A2A/C6A85B?text=B'">
         </div>
         
-        <h2>Verifikasi <span class="gold-text">Keamanan</span></h2>
-        <p>Untuk mengakses website Broadcasting SMK Texar,<br>silakan konfirmasi bahwa Anda bukan robot.</p>
+        <h2>Verifikasi Keamanan</h2>
+        <p>Untuk mengakses website Broadcasting SMK Texar, silakan verifikasi bahwa Anda adalah manusia.</p>
         
-        <!-- reCAPTCHA v2 widget -->
+        <!-- reCAPTCHA v2 akan muncul di sini -->
         <div class="g-recaptcha-container">
-            <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY_HERE" data-theme="dark"></div>
+            <div class="g-recaptcha" 
+                 data-sitekey="6LcY-McsAAAAAABo-ofxqdXFLrpVVm32XMbFVOuK"
+                 data-callback="onCaptchaSuccess"
+                 data-expired-callback="onCaptchaExpired"
+                 data-theme="dark">
+            </div>
         </div>
         
         <button class="verify-btn" id="verifyBtn" disabled>
@@ -212,158 +225,156 @@
         </button>
         
         <div id="statusMessage" class="status-message"></div>
-        <div class="footer-note">Protected by reCAPTCHA</div>
+        
+        <a class="retry-link" id="retryLink">
+            <i class="fas fa-sync-alt"></i> Verifikasi ulang
+        </a>
     </div>
+</div>
+
+<div class="footer-badge">
+    Protected by reCAPTCHA | Broadcasting SMK Texar Karawang
 </div>
 
 <script>
     // ==================== KONFIGURASI ====================
     // GANTI DENGAN SITE KEY DARI GOOGLE reCAPTCHA v2!
-    // (SITE KEY didapat dari https://www.google.com/recaptcha/admin)
-    const SITE_KEY = '6LcY-McsAAAAAABo-ofxqdXFLrpVVm32XMbFVOuK';
+    // Cara dapatkan: https://www.google.com/recaptcha/admin
+    const RECAPTCHA_SITE_KEY = '6LcY-McsAAAAAABo-ofxqdXFLrpVVm32XMbFVOuK';
+    
+    // State
+    let captchaToken = null;
+    let isVerified = false;
     
     // ==================== ELEMENTS ====================
     const verifyBtn = document.getElementById('verifyBtn');
-    const statusMsg = document.getElementById('statusMessage');
+    const retryLink = document.getElementById('retryLink');
+    const statusDiv = document.getElementById('statusMessage');
     
-    // ==================== FUNGSI ====================
+    // ==================== FUNCTIONS ====================
     function showStatus(type, message) {
-        statusMsg.className = `status-message ${type}`;
-        statusMsg.innerHTML = message;
+        statusDiv.className = `status-message ${type}`;
+        statusDiv.innerHTML = message;
         
-        // Auto hide after 3 seconds for success
-        if (type === 'success') {
+        // Auto hide after 3 seconds for success/error
+        if (type === 'success' || type === 'error') {
             setTimeout(() => {
-                statusMsg.style.display = 'none';
+                if (statusDiv.className.includes(type)) {
+                    statusDiv.style.display = 'none';
+                    setTimeout(() => {
+                        statusDiv.style.display = '';
+                    }, 300);
+                }
             }, 3000);
         }
     }
     
-    function hideStatus() {
-        statusMsg.style.display = 'none';
-        statusMsg.className = 'status-message';
-    }
-    
-    // Set verifikasi PERMANEN di browser ini
-    function setPermanentVerification() {
-        // Local storage (permanen sampai user hapus cache)
-        localStorage.setItem('broadcasting_verified', 'true');
-        localStorage.setItem('broadcasting_verified_date', new Date().toISOString());
-        
-        // Session storage backup
+    function setSessionVerified() {
+        // Session storage (hilang saat browser ditutup)
         sessionStorage.setItem('captcha_verified', 'true');
+        sessionStorage.setItem('captcha_time', Date.now().toString());
         
-        // Cookie (expired 1 tahun)
-        document.cookie = "captcha_verified=true; path=/; max-age=31536000";
+        // Cookie short-term (1 jam, opsional sebagai backup)
+        document.cookie = "captcha_verified=true; path=/; max-age=3600";
     }
     
-    function isPermanentlyVerified() {
-        // Cek local storage
-        if (localStorage.getItem('broadcasting_verified') === 'true') {
-            return true;
-        }
-        // Cek session storage
-        if (sessionStorage.getItem('captcha_verified') === 'true') {
-            return true;
-        }
-        // Cek cookie
-        if (document.cookie.includes('captcha_verified=true')) {
-            return true;
-        }
+    function isSessionVerified() {
+        if (sessionStorage.getItem('captcha_verified') === 'true') return true;
+        if (document.cookie.includes('captcha_verified=true')) return true;
         return false;
     }
     
-    // Cek apakah reCAPTCHA sudah selesai
-    function onCaptchaCompleted() {
+    function redirectToWebsite() {
+        showStatus('success', '✓ Verifikasi berhasil! Mengalihkan ke website...');
+        verifyBtn.disabled = true;
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
+    }
+    
+    // ==================== reCAPTCHA CALLBACKS ====================
+    window.onCaptchaSuccess = function(token) {
+        console.log('CAPTCHA berhasil');
+        captchaToken = token;
+        isVerified = true;
         verifyBtn.disabled = false;
-        hideStatus();
-    }
+        showStatus('success', '✓ Verifikasi berhasil! Klik tombol untuk masuk.');
+    };
     
-    function onCaptchaExpired() {
+    window.onCaptchaExpired = function() {
+        console.log('CAPTCHA expired');
+        captchaToken = null;
+        isVerified = false;
         verifyBtn.disabled = true;
-        showStatus('error', '⏱️ Verifikasi kadaluarsa. Silakan centang ulang.');
-    }
+        showStatus('error', '⏰ Verifikasi kadaluarsa. Silakan centang ulang.');
+    };
     
-    function onCaptchaError() {
-        verifyBtn.disabled = true;
-        showStatus('error', '❌ Terjadi kesalahan. Silakan refresh halaman.');
-    }
-    
-    // Verifikasi ke Google
-    async function verifyWithGoogle(responseToken) {
-        if (!responseToken) {
-            showStatus('error', '❌ Silakan centang kotak "Saya bukan robot" terlebih dahulu.');
-            return false;
+    // ==================== VERIFY BUTTON ====================
+    verifyBtn.addEventListener('click', async () => {
+        if (!isVerified || !captchaToken) {
+            showStatus('error', '❌ Silakan centang "Saya bukan robot" terlebih dahulu!');
+            return;
         }
         
-        showStatus('loading', '🔄 Memverifikasi...');
         verifyBtn.disabled = true;
-        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memverifikasi...';
+        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memproses...';
         
         try {
-            // Di sini idealnya kirim token ke backend untuk validasi
-            // Untuk frontend-only, kita terima tokennya dan anggap valid
+            // Di sini kamu bisa kirim token ke backend untuk validasi
+            // Untuk sekarang, kita langsung anggap valid
             
-            // Simulasi validasi (untuk production, sebaiknya kirim ke server)
-            if (responseToken && responseToken.length > 20) {
-                // Verifikasi berhasil
-                showStatus('success', '✅ Verifikasi berhasil! Mengalihkan...');
-                setPermanentVerification();
-                
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-                return true;
-            } else {
-                throw new Error('Token tidak valid');
-            }
+            setSessionVerified();
+            redirectToWebsite();
             
         } catch (error) {
-            console.error('Verification error:', error);
-            showStatus('error', '❌ Verifikasi gagal. Silakan coba lagi.');
+            console.error('Error:', error);
+            showStatus('error', 'Terjadi kesalahan. Silakan coba lagi.');
             verifyBtn.disabled = false;
             verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Verifikasi & Masuk';
-            
-            // Reset reCAPTCHA
-            if (typeof grecaptcha !== 'undefined') {
-                grecaptcha.reset();
-            }
-            return false;
-        }
-    }
-    
-    // ==================== EVENT LISTENERS ====================
-    verifyBtn.addEventListener('click', async () => {
-        if (typeof grecaptcha !== 'undefined') {
-            const token = grecaptcha.getResponse();
-            await verifyWithGoogle(token);
-        } else {
-            showStatus('error', '❌ reCAPTCHA belum siap. Refresh halaman.');
         }
     });
     
-    // ==================== CEK SUDAH TERVERIFIKASI ====================
-    if (isPermanentlyVerified()) {
-        // Langsung redirect ke index
+    // ==================== RETRY LINK ====================
+    retryLink.addEventListener('click', () => {
+        // Reset CAPTCHA
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.reset();
+        }
+        captchaToken = null;
+        isVerified = false;
+        verifyBtn.disabled = true;
+        showStatus('loading', '🔄 Silakan centang "Saya bukan robot" lagi.');
+        
+        setTimeout(() => {
+            if (statusDiv.className.includes('loading')) {
+                statusDiv.style.display = 'none';
+                setTimeout(() => {
+                    statusDiv.style.display = '';
+                }, 300);
+            }
+        }, 2000);
+    });
+    
+    // ==================== CEK SESSION SEBELUMNYA ====================
+    if (isSessionVerified()) {
+        // Langsung redirect ke index (tanpa CAPTCHA)
         window.location.href = 'index.html';
     }
     
-    // Expose callback functions ke global (dipanggil oleh reCAPTCHA)
-    window.onCaptchaCompleted = onCaptchaCompleted;
-    window.onCaptchaExpired = onCaptchaExpired;
-    window.onCaptchaError = onCaptchaError;
-</script>
-
-<!-- Register callback untuk reCAPTCHA -->
-<script>
-    // Tunggu reCAPTCHA siap
-    window.onload = function() {
-        if (typeof grecaptcha !== 'undefined') {
-            // Optional: render ulang jika perlu
-            console.log('reCAPTCHA v2 siap');
+    // ==================== TEMA DARK UNTUK reCAPTCHA ====================
+    // Styling tambahan untuk reCAPTCHA agar sesuai tema
+    const style = document.createElement('style');
+    style.textContent = `
+        .g-recaptcha {
+            transform: scale(0.92);
+            transform-origin: center;
         }
-    };
+        .g-recaptcha iframe {
+            border-radius: 8px;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
-
 </body>
 </html>
