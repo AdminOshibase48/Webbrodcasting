@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anggota | Broadcasting SMK Texar Karawang</title>
+    
+    <!-- SEO Meta -->
+    <meta name="description" content="Daftar anggota dan pengurus Broadcasting SMK Texar Karawang - Tim kreatif media sekolah">
+    <meta name="keywords" content="anggota broadcasting, pengurus broadcasting, tim media SMK Texar">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/gambar/logo/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/gambar/logo/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Additional styles for members page */
+        .members-hero {
+            min-height: 40vh;
+            background: linear-gradient(135deg, #050505 0%, #0f0f1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .members-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(198,168,91,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px;
+            padding: 60px 0;
+        }
+        
+        .member-card {
+            background: #0B0B0B;
+            border: 1px solid rgba(198,168,91,0.2);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            text-align: center;
+            padding: 32px 24px;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-8px);
+            border-color: #C6A85B;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .member-avatar {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(198,168,91,0.3);
+            transition: all 0.3s;
+            background: #1a1a1a;
+        }
+        
+        .member-card:hover .member-avatar {
+            border-color: #C6A85B;
+            transform: scale(1.02);
+        }
+        
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .member-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #C6A85B;
+            margin-bottom: 4px;
+        }
+        
+        .member-role {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #A1A1AA;
+            margin-bottom: 12px;
+        }
+        
+        .member-division {
+            display: inline-block;
+            background: rgba(198,168,91,0.1);
+            border: 1px solid rgba(198,168,91,0.2);
+            border-radius: 40px;
+            padding: 4px 16px;
+            font-size: 0.7rem;
+            color: #C6A85B;
+        }
+        
+        .filter-section {
+            padding: 30px 0 0;
+            border-bottom: 1px solid rgba(198,168,91,0.1);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            padding: 8px 24px;
+            background: transparent;
+            border: 1px solid rgba(198,168,91,0.3);
+            color: #A1A1AA;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 40px;
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #C6A85B;
+            color: #050505;
+            border-color: #C6A85B;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 60px;
+        }
+        
+        .loading-spinner i {
+            font-size: 2rem;
+            color: #C6A85B;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 60px;
+            color: #A1A1AA;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #C6A85B;
+            opacity: 0.5;
+            margin-bottom: 16px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #C6A85B;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: #A1A1AA;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 768px) {
+            .members-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 40px 0;
+            }
+            .member-avatar {
+                width: 120px;
+                height: 120px;
+            }
+            .stats-bar {
+                gap: 20px;
+            }
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <div class="brand">
+            <div class="logo-circle"><img src="assets/gambar/logo.png" alt="Logo"></div>
+            <div class="brand-text">
+                <h2>Broadcasting</h2>
+                <p>SMK Texar Karawang</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#tentang">Tentang</a>
+            <a href="index.html#program">Program</a>
+            <a href="index.html#divisi">Divisi</a>
+            <a href="anggota.html">Anggota</a>
+            <a href="dokumentasi.html">Dokumentasi</a>
+            <a href="index.html#kontak">Kontak</a>
+        </div>
+        <div class="burger" id="burgerBtn">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="nav-menu-mobile" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="index.html#tentang">Tentang</a>
+    <a href="index.html#program">Program</a>
+    <a href="index.html#divisi">Divisi</a>
+    <a href="anggota.html">Anggota</a>
+    <a href="dokumentasi.html">Dokumentasi</a>
+    <a href="index.html#kontak">Kontak</a>
+</div>
+
+<!-- Hero Section -->
+<section class="members-hero">
+    <div class="hero-content">
+        <div class="hero-badge">TIM KREATIF</div>
+        <h1>Anggota Broadcasting</h1>
+        <div class="hero-sub">Creative Media Team</div>
+        <p class="hero-desc">Bertalenta, profesional, dan penuh dedikasi dalam berkarya</p>
+    </div>
+</section>
+
+<!-- Stats & Filter -->
+<div class="container">
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-item">
+            <div class="stat-number" id="totalMembers">0</div>
+            <div class="stat-label">Total Anggota</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="totalDivisions">0</div>
+            <div class="stat-label">Divisi Aktif</div>
+        </div>
+    </div>
+    
+    <div class="filter-section">
+        <div class="filter-buttons" id="filterButtons">
+            <button class="filter-btn active" data-filter="all">Semua</button>
+        </div>
+    </div>
+</div>
+
+<!-- Members Grid -->
+<section class="container">
+    <div id="membersContainer" class="members-grid">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-pulse"></i>
+            <p>Memuat data anggota...</p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>© 2025 Broadcasting — SMK Texar Karawang | Creative Media & Broadcasting Club</p>
+        <div class="social-links" style="justify-content: center; margin-top: 16px;">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <div class="gold-line-animate"></div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // ==================== SUPABASE CONFIGURATION ====================
+    // GANTI DENGAN PROJECT SUPABASE KAMU!
+    const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let allMembers = [];
+    let currentFilter = 'all';
+    
+    // ==================== LOAD MEMBERS ====================
+    async function loadMembers() {
+        const container = document.getElementById('membersContainer');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i><p>Memuat data anggota...</p></div>';
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('members')
+                .select('*')
+                .order('created_at', { ascending: true });
+            
+            if (error) throw error;
+            
+            if (data && data.length > 0) {
+                allMembers = data;
+                renderMembers(allMembers);
+                setupFilters(allMembers);
+                updateStats(allMembers);
+            } else {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>Belum ada data anggota</p>
+                        <p style="font-size:0.8rem; margin-top:8px;">Data akan segera ditambahkan</p>
+                    </div>
+                `;
+            }
+            
+        } catch (error) {
+            console.error('Error loading members:', error);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Gagal memuat data anggota</p>
+                    <p style="font-size:0.8rem; margin-top:8px;">Silakan refresh halaman</p>
+                </div>
+            `;
+        }
+    }
+    
+    // ==================== RENDER MEMBERS ====================
+    function renderMembers(members) {
+        const container = document.getElementById('membersContainer');
+        
+        if (!members || members.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <p>Tidak ada anggota di divisi ini</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        for (const member of members) {
+            const name = escapeHtml(member.name || 'Anggota');
+            const role = escapeHtml(member.role || '-');
+            const division = escapeHtml(member.division || 'Tim Kreatif');
+            const photo = member.photo || `https://placehold.co/400x400/1a1a1a/C6A85B?text=${encodeURIComponent(name.charAt(0))}`;
+            
+            html += `
+                <div class="member-card" data-division="${division.toLowerCase()}">
+                    <div class="member-avatar">
+                        <img src="${photo}" alt="${name}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1a1a1a/C6A85B?text=${encodeURIComponent(name.charAt(0))}'">
+                    </div>
+                    <h3 class="member-name">${name}</h3>
+                    <p class="member-role">${role}</p>
+                    <span class="member-division">${division}</span>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html;
+    }
+    
+    // ==================== SETUP FILTERS ====================
+    function setupFilters(members) {
+        const divisions = [...new Set(members.map(m => m.division).filter(d => d))];
+        
+        const filterContainer = document.getElementById('filterButtons');
+        let html = '<button class="filter-btn active" data-filter="all">Semua</button>';
+        
+        for (const division of divisions) {
+            html += `<button class="filter-btn" data-filter="${escapeHtml(division)}">${escapeHtml(division)}</button>`;
+        }
+        
+        filterContainer.innerHTML = html;
+        
+        // Add event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                currentFilter = filter;
+                
+                if (filter === 'all') {
+                    renderMembers(allMembers);
+                } else {
+                    const filtered = allMembers.filter(m => m.division === filter);
+                    renderMembers(filtered);
+                }
+            });
+        });
+    }
+    
+    // ==================== UPDATE STATS ====================
+    function updateStats(members) {
+        const totalMembers = members.length;
+        const totalDivisions = [...new Set(members.map(m => m.division).filter(d => d))].length;
+        
+        document.getElementById('totalMembers').textContent = totalMembers;
+        document.getElementById('totalDivisions').textContent = totalDivisions;
+    }
+    
+    // ==================== UTILITY FUNCTIONS ====================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    
+    // ==================== NAVBAR & MOBILE MENU ====================
+    function initNavbar() {
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
+    
+    function initMobileMenu() {
+        const burgerBtn = document.getElementById('burgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        if (burgerBtn && mobileMenu) {
+            burgerBtn.addEventListener('click', () => {
+                burgerBtn.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    burgerBtn.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+    }
+    
+    // ==================== SCROLL REVEAL ====================
+    function initScrollReveal() {
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        revealElements.forEach(el => observer.observe(el));
+    }
+    
+    // ==================== INITIALIZE ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        initNavbar();
+        initMobileMenu();
+        initScrollReveal();
+        loadMembers();
+    });
+</script>
+</body>
+</html>
