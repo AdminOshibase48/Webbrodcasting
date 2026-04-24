@@ -1,519 +1,587 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pendaftaran Anggota | Broadcasting SMK Texar</title>
-  
-  <!-- SEO Meta -->
-  <meta name="description" content="Daftar menjadi anggota Broadcasting SMK Texar Karawang. Kembangkan bakat di bidang media, videografi, dan jurnalistik.">
-  
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/home.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="assets/gambar/logo/favicon.ico">
-  
-  <style>
-    /* Additional styles for registration page */
-    .registration-hero {
-      height: 40vh;
-      min-height: 300px;
-      background: linear-gradient(135deg, #050505 0%, #1a1a2e 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Anggota | Broadcasting SMK Texar</title>
     
-    .registration-form-container {
-      max-width: 800px;
-      margin: 60px auto;
-      padding: 0 24px;
-    }
+    <!-- SEO Meta -->
+    <meta name="description" content="Pendaftaran anggota baru Broadcasting SMK Texar Karawang untuk siswa kelas 10">
+    <meta name="robots" content="noindex,nofollow">
     
-    .form-card {
-      background: rgba(11, 11, 11, 0.9);
-      border: 1px solid rgba(198, 168, 91, 0.25);
-      border-radius: 24px;
-      padding: 48px;
-      backdrop-filter: blur(10px);
-    }
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     
-    .form-group {
-      margin-bottom: 28px;
-    }
+   <!-- Favicon - Versi Paling Kompatibel -->
+   <link rel="icon" type="image/x-icon" href="../assets/gambar/logo/favicon.ico">
+   <link rel="icon" type="image/png" sizes="32x32" href="../assets/gambar/logo/favicon-32x32.png">
+   <link rel="icon" type="image/png" sizes="16x16" href="../assets/gambar/logo/favicon-16x16.png">
+   <link rel="icon" type="image/png" sizes="96x96" href="../assets/gambar/logo/favicon-96x96.png">
+   <link rel="apple-touch-icon" sizes="180x180" href="../assets/gambar/logo/apple-touch-icon.png">
+   <link rel="manifest" href="../assets/gambar/logo/site.webmanifest">
+   <meta name="msapplication-TileColor" content="#050505">
+   <meta name="theme-color" content="#C6A85B">
     
-    .form-group label {
-      display: block;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #C6A85B;
-      margin-bottom: 8px;
-    }
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/home.css">
     
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 14px 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(198, 168, 91, 0.2);
-      border-radius: 12px;
-      color: #F8F8F8;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.3s;
-    }
-    
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #C6A85B;
-      background: rgba(198, 168, 91, 0.05);
-    }
-    
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    
-    .division-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-top: 8px;
-    }
-    
-    .division-option {
-      position: relative;
-      cursor: pointer;
-    }
-    
-    .division-option input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-    }
-    
-    .division-option label {
-      display: block;
-      padding: 12px 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(198, 168, 91, 0.2);
-      border-radius: 40px;
-      text-align: center;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-bottom: 0;
-      text-transform: none;
-      letter-spacing: normal;
-    }
-    
-    .division-option input:checked + label {
-      background: #C6A85B;
-      color: #050505;
-      border-color: #C6A85B;
-    }
-    
-    .division-option label:hover {
-      border-color: #C6A85B;
-      background: rgba(198, 168, 91, 0.1);
-    }
-    
-    .submit-btn {
-      width: 100%;
-      padding: 16px;
-      background: #C6A85B;
-      border: none;
-      border-radius: 40px;
-      color: #050505;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      letter-spacing: 2px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 16px;
-    }
-    
-    .submit-btn:hover {
-      background: #E5D3A1;
-      transform: translateY(-2px);
-    }
-    
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
-    .success-message {
-      text-align: center;
-      padding: 40px;
-      background: rgba(198, 168, 91, 0.1);
-      border: 1px solid #C6A85B;
-      border-radius: 24px;
-    }
-    
-    .success-message i {
-      font-size: 4rem;
-      color: #C6A85B;
-      margin-bottom: 20px;
-    }
-    
-    .error-message {
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid #ff6b6b;
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 24px;
-      color: #ff6b6b;
-      font-size: 0.85rem;
-      display: none;
-    }
-    
-    @media (max-width: 768px) {
-      .form-card {
-        padding: 32px 24px;
-      }
-      .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
-      .division-options {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-  </style>
+    <style>
+        /* Additional styles for registration page */
+        .daftar-hero {
+            min-height: 40vh;
+            background: linear-gradient(135deg, #050505 0%, #0f0f1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .daftar-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(198,168,91,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .form-container {
+            max-width: 800px;
+            margin: -40px auto 80px;
+            padding: 0 24px;
+        }
+        
+        .form-card {
+            background: #0B0B0B;
+            border: 1px solid rgba(198,168,91,0.25);
+            border-radius: 28px;
+            padding: 48px 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-group {
+            margin-bottom: 28px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #C6A85B;
+            margin-bottom: 8px;
+        }
+        
+        .form-group label i {
+            margin-right: 6px;
+            width: 20px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(198,168,91,0.25);
+            border-radius: 14px;
+            color: #F8F8F8;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #C6A85B;
+            background: rgba(198,168,91,0.08);
+        }
+        
+        /* Fix untuk select options - biar keliatan */
+        .form-group select {
+            cursor: pointer;
+        }
+        
+        .form-group select option {
+            background: #1a1a1a;
+            color: #F8F8F8;
+            padding: 12px;
+        }
+        
+        .form-group select option:hover {
+            background: #C6A85B;
+            color: #050505;
+        }
+        
+        /* Input kelas manual */
+        .kelas-hint {
+            font-size: 0.65rem;
+            color: #A1A1AA;
+            margin-top: 6px;
+        }
+        
+        .kelas-hint i {
+            margin-right: 4px;
+        }
+        
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #C6A85B;
+            border: none;
+            border-radius: 40px;
+            color: #050505;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            background: #E5D3A1;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert-message {
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            display: none;
+            font-size: 0.85rem;
+        }
+        
+        .alert-success {
+            background: rgba(81, 207, 102, 0.15);
+            border: 1px solid #51cf66;
+            color: #51cf66;
+        }
+        
+        .alert-error {
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.15);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+        }
+        
+        .info-note {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(198,168,91,0.1);
+            text-align: center;
+            font-size: 0.7rem;
+            color: #A1A1AA;
+        }
+        
+        .info-note i {
+            color: #C6A85B;
+            margin-right: 6px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 32px 24px;
+            }
+            .row-2 {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .daftar-hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
-  <div class="nav-container">
-    <div class="brand">
-      <div class="logo-circle"><img src="../assets/gambar/logo/favicon-96x96.png" alt="Logo"></div>
-      <div class="brand-text">
-        <h2>Broadcasting</h2>
-        <p>SMK Texar Karawang</p>
-      </div>
+    <div class="nav-container">
+        <div class="brand">
+            <div class="logo-circle"><img src=../"assets/gambar/favicon.png" alt="Logo"></div>
+            <div class="brand-text">
+                <h2>Broadcasting</h2>
+                <p>SMK Texar Karawang</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="../index.html#tentang">Tentang</a>
+            <a href="../index.html#program">Program</a>
+            <a href="../index.html#divisi">Divisi</a>
+            <a href="anggota.html">Anggota</a>
+            <a href="dokumentasi.html">Dokumentasi</a>
+            <a href="../index.html#kontak">Kontak</a>
+            <a href="daftar.html" style="color:#C6A85B;">Daftar →</a>
+        </div>
+        <div class="burger" id="burgerBtn">
+            <span></span><span></span><span></span>
+        </div>
     </div>
-    <div class="nav-links">
-      <a href="../index.html">Home</a>
-      <a href="../index.html#tentang">Tentang</a>
-      <a href="../index.html#program">Program</a>
-      <a href="../index.html#divisi">Divisi</a>
-      <a href="../index.html#anggota">Anggota</a>
-      <a href="dokumentasi.html">Dokumentasi</a>
-      <a href="pendaftaran.html">Pendaftaran</a>
-      <a href="../index.html#kontak">Kontak</a>
-    </div>
-    <div class="burger" id="burgerBtn">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
 </nav>
 
 <!-- Mobile Menu -->
 <div class="nav-menu-mobile" id="mobileMenu">
-  <a href="index.html">Home</a>
-  <a href="index.html#tentang">Tentang</a>
-  <a href="index.html#program">Program</a>
-  <a href="index.html#divisi">Divisi</a>
-  <a href="index.html#anggota">Anggota</a>
-  <a href="dokumentasi.html">Dokumentasi</a>
-  <a href="pendaftaran.html">Pendaftaran</a>
-  <a href="index.html#kontak">Kontak</a>
+    <a href="../index.html">Home</a>
+    <a href="../index.html#tentang">Tentang</a>
+    <a href="../index.html#program">Program</a>
+    <a href="../index.html#divisi">Divisi</a>
+    <a href="anggota.html">Anggota</a>
+    <a href="dokumentasi.html">Dokumentasi</a>
+    <a href="../index.html#kontak">Kontak</a>
+    <a href="daftar.html" style="color:#C6A85B;">Daftar</a>
 </div>
 
 <!-- Hero Section -->
-<section class="registration-hero">
-  <div class="hero-content">
-    <div class="hero-badge">JOIN US</div>
-    <h1>Pendaftaran Anggota</h1>
-    <div class="hero-sub">Broadcasting SMK Texar Karawang</div>
-  </div>
+<section class="daftar-hero">
+    <div class="hero-content">
+        <div class="hero-badge">PENDAFTARAN ANGGOTA BARU</div>
+        <h1>Join Broadcasting</h1>
+        <div class="hero-sub">Kelas 10 · SMK Texar Karawang</div>
+        <p class="hero-desc">Bergabunglah dengan tim kreatif media sekolah!</p>
+    </div>
 </section>
 
-<!-- Form Section -->
-<div class="registration-form-container">
-  <div class="form-card">
-    <div id="errorMessage" class="error-message"></div>
-    <div id="successMessage" style="display: none;" class="success-message">
-      <i class="fas fa-check-circle"></i>
-      <h3>Pendaftaran Berhasil!</h3>
-      <p>Terima kasih telah mendaftar. Kami akan menghubungi Anda segera.</p>
-      <a href="index.html" class="btn-cinema" style="margin-top: 20px; display: inline-block;">Kembali ke Beranda</a>
+<!-- Form Pendaftaran -->
+<div class="form-container">
+    <div class="form-card">
+        <div id="alertBox" class="alert-message"></div>
+        
+        <form id="registrationForm">
+            <div class="row-2">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nama Lengkap</label>
+                    <input type="text" id="nama" name="nama" required placeholder="Masukkan nama lengkap">
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-whatsapp"></i> No. WhatsApp</label>
+                    <input type="tel" id="wa" name="wa" required placeholder="08xx-xxxx-xxxx">
+                </div>
+            </div>
+            
+            <div class="row-2">
+                <div class="form-group">
+                    <label><i class="fas fa-graduation-cap"></i> Kelas</label>
+                    <input type="text" id="kelas" name="kelas" required placeholder="Contoh: X TM 1, X RPL 2, X TKR 3">
+                    <div class="kelas-hint">
+                        <i class="fas fa-info-circle"></i> Format: X [Jurusan] [No] — Contoh: X TM 1, X RPL 2, X TKR 3
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-building"></i> Jurusan</label>
+                    <select id="jurusan" name="jurusan" required>
+                        <option value="">Pilih Jurusan</option>
+                        <option value="TM (Teknik Mesin)">TM (Teknik Mesin)</option>
+                        <option value="TMI (Teknik Mesin Industri)">TMI (Teknik Mesin Industri)</option>
+                        <option value="RPL (Rekayasa Perangkat Lunak)">RPL (Rekayasa Perangkat Lunak)</option>
+                        <option value="TKR (Teknik Kendaraan Ringan)">TKR (Teknik Kendaraan Ringan)</option>
+                        <option value="TBO (Teknik Body Otomotif)">TBO (Teknik Body Otomotif)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-users"></i> Divisi yang Dipilih</label>
+                <select id="divisi" name="divisi" required>
+                    <option value="">Pilih Divisi</option>
+                    <option value="Reporter">Reporter (Jurnalistik & Wawancara)</option>
+                    <option value="Videografer">Videografer (Shooting & Sinematografi)</option>
+                    <option value="Fotografer">Fotografer (Dokumentasi Visual)</option>
+                    <option value="Editor">Editor (Post-production & Grading)</option>
+                    <option value="Tim Kreatif">Tim Kreatif (Desain & Konsep)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-comment"></i> Alasan Bergabung</label>
+                <textarea id="alasan" name="alasan" rows="3" required placeholder="Mengapa kamu ingin bergabung dengan Broadcasting?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-star"></i> Pengalaman (jika ada)</label>
+                <textarea id="pengalaman" name="pengalaman" rows="2" placeholder="Ceritakan pengalamanmu di bidang media, fotografi, atau videografi (opsional)"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span>Kirim Pendaftaran →</span>
+            </button>
+            
+            <div class="info-note">
+                <i class="fas fa-shield-alt"></i> Data akan dikirim ke admin melalui WhatsApp
+            </div>
+        </form>
     </div>
-    
-    <form id="registrationForm" style="display: block;">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nama Lengkap</label>
-          <input type="text" id="fullName" required placeholder="Contoh: Ahmad Fauzi">
-        </div>
-        <div class="form-group">
-          <label>NIS / NISN</label>
-          <input type="text" id="nis" placeholder="Nomor Induk Siswa">
-        </div>
-      </div>
-      
-      <div class="form-row">
-        <div class="form-group">
-          <label>Kelas</label>
-          <select id="class">
-            <option value="">Pilih Kelas</option>
-            <option value="X MM 1">X MM 1</option>
-            <option value="X MM 2">X MM 2</option>
-            <option value="X MM 3">X MM 3</option>
-            <option value="XI MM 1">XI MM 1</option>
-            <option value="XI MM 2">XI MM 2</option>
-            <option value="XI MM 3">XI MM 3</option>
-            <option value="XII MM 1">XII MM 1</option>
-            <option value="XII MM 2">XII MM 2</option>
-            <option value="XII MM 3">XII MM 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Jurusan</label>
-          <select id="major">
-            <option value="">Pilih Jurusan</option>
-            <option value="Multimedia">Multimedia (MM)</option>
-            <option value="Rekayasa Perangkat Lunak">RPL</option>
-            <option value="Teknik Komputer Jaringan">TKJ</option>
-            <option value="Akuntansi">Akuntansi</option>
-            <option value="Tata Boga">Tata Boga</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="form-row">
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="email" required placeholder="contoh@email.com">
-        </div>
-        <div class="form-group">
-          <label>Nomor WhatsApp</label>
-          <input type="tel" id="phone" required placeholder="08xxxxxxxxxx">
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Pilih Divisi (Minimal 1, Maksimal 2)</label>
-        <div class="division-options">
-          <div class="division-option">
-            <input type="checkbox" id="divReporter" value="Reporter">
-            <label for="divReporter">🎙️ Reporter</label>
-          </div>
-          <div class="division-option">
-            <input type="checkbox" id="divVideografer" value="Videografer">
-            <label for="divVideografer">📹 Videografer</label>
-          </div>
-          <div class="division-option">
-            <input type="checkbox" id="divFotografer" value="Fotografer">
-            <label for="divFotografer">📸 Fotografer</label>
-          </div>
-          <div class="division-option">
-            <input type="checkbox" id="divEditor" value="Editor">
-            <label for="divEditor">✂️ Editor</label>
-          </div>
-          <div class="division-option">
-            <input type="checkbox" id="divKreatif" value="Tim Kreatif">
-            <label for="divKreatif">🎨 Tim Kreatif</label>
-          </div>
-        </div>
-        <small style="color: #A1A1AA; font-size: 0.7rem; display: block; margin-top: 8px;">* Pilih minimal 1 divisi</small>
-      </div>
-      
-      <div class="form-group">
-        <label>Alasan Bergabung</label>
-        <textarea id="reason" rows="4" placeholder="Ceritakan alasan Anda ingin bergabung dengan Broadcasting..."></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label>Pengalaman (Opsional)</label>
-        <textarea id="experience" rows="3" placeholder="Jika ada pengalaman di bidang media, tuliskan di sini..."></textarea>
-      </div>
-      
-      <button type="submit" class="submit-btn" id="submitBtn">
-        <i class="fas fa-paper-plane"></i> Daftar Sekarang
-      </button>
-    </form>
-  </div>
 </div>
 
 <!-- Footer -->
 <footer class="footer">
-  <div class="container">
-    <p>© 2025 Broadcasting — SMK Texar Karawang | Creative Media & Broadcasting Club</p>
-    <div class="gold-line-animate"></div>
-  </div>
+    <div class="container">
+        <p>© 2025 Broadcasting — SMK Texar Karawang | Creative Media & Broadcasting Club</p>
+        <div class="social-links" style="justify-content: center; margin-top: 16px;">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <div class="gold-line-animate"></div>
+    </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ==================== SUPABASE CONFIG ====================
-  const SUPABASE_URL = 'https://yjmutdmhczorrsdaqbkw.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_hkxIwYsO1ku8YcdpdZ9WTg_qeQU5Xip';
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  
-  // ==================== DOM ELEMENTS ====================
-  const form = document.getElementById('registrationForm');
-  const successDiv = document.getElementById('successMessage');
-  const errorDiv = document.getElementById('errorMessage');
-  const submitBtn = document.getElementById('submitBtn');
-  
-  // ==================== CHECK DIVISI MAX 2 ====================
-  const checkboxes = document.querySelectorAll('.division-option input');
-  
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-      const checked = document.querySelectorAll('.division-option input:checked');
-      if (checked.length > 2) {
-        checkbox.checked = false;
-        showError('Maksimal memilih 2 divisi!');
-        setTimeout(() => hideError(), 2000);
-      }
+    // ==================== KONFIGURASI ====================
+    // GANTI DENGAN NOMOR ADMIN REAL (pakai kode negara tanpa +)
+    const ADMIN_WHATSAPP = '6281234567890'; // Contoh: 6281234567890
+    
+    // Google Sheets Web App URL (optional, bisa dikosongkan jika tidak pakai)
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwrUM0K0ptrPPckFps9kZcGCks8GE-rUUreRw-vw3Gu7BJSTpC4xNs-JmRKOcarM_ORaQ/exec';
+    
+    // ==================== ELEMENTS ====================
+    const form = document.getElementById('registrationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const alertBox = document.getElementById('alertBox');
+    
+    // ==================== UTILITY FUNCTIONS ====================
+    function showAlert(message, type) {
+        alertBox.textContent = message;
+        alertBox.className = `alert-message alert-${type}`;
+        alertBox.style.display = 'block';
+        
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 5000);
+    }
+    
+    function formatWhatsAppNumber(number) {
+        let clean = number.replace(/\D/g, '');
+        if (clean.startsWith('0')) {
+            clean = '62' + clean.substring(1);
+        }
+        if (!clean.startsWith('62')) {
+            clean = '62' + clean;
+        }
+        return clean;
+    }
+    
+    function validateKelas(kelas) {
+        // Cek apakah kelas dimulai dengan X (kelas 10)
+        const upperKelas = kelas.toUpperCase().trim();
+        if (!upperKelas.startsWith('X')) {
+            return false;
+        }
+        return true;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    
+    // ==================== SEND TO GOOGLE SHEETS (OPTIONAL) ====================
+    async function sendToGoogleSheets(data) {
+        if (!GOOGLE_SHEETS_URL) return true;
+        
+        try {
+            const response = await fetch(GOOGLE_SHEETS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return true;
+        } catch (error) {
+            console.error('Google Sheets error:', error);
+            return false;
+        }
+    }
+    
+    // ==================== SEND WHATSAPP NOTIFICATION ====================
+    async function sendWhatsAppNotification(data) {
+        const waNumber = formatWhatsAppNumber(data.wa);
+        
+        // Pesan untuk admin
+        const adminMessage = `📢 *PENDAFTARAN BARU BROADCASTING*
+        
+*Nama:* ${data.nama}
+*Kelas:* ${data.kelas}
+*Jurusan:* ${data.jurusan}
+*Divisi:* ${data.divisi}
+*WA:* ${data.wa}
+
+*Alasan:*
+${data.alasan}
+
+*Pengalaman:*
+${data.pengalaman || '-'}
+
+---
+📅 Waktu: ${new Date().toLocaleString('id-ID')}
+📍 SMK Texar Karawang
+⭐ Status: Menunggu Konfirmasi`;
+        
+        // Pesan konfirmasi untuk calon anggota
+        const userMessage = `Halo *${data.nama}*,
+
+Terima kasih telah mendaftar di *Broadcasting SMK Texar Karawang*! ✅
+
+📋 *Data Pendaftaran:*
+• Kelas: ${data.kelas}
+• Jurusan: ${data.jurusan}
+• Divisi: ${data.divisi}
+
+Tim kami akan menghubungimu dalam 1x24 jam untuk informasi lebih lanjut mengenai proses seleksi.
+
+*Catatan:*
+- Siapkan portofolio (jika ada)
+- Ikuti info selanjutnya dari admin
+
+Salam kreatif,
+*Broadcasting SMK Texar* 🎬`;
+        
+        const adminEncoded = encodeURIComponent(adminMessage);
+        const userEncoded = encodeURIComponent(userMessage);
+        
+        // Buka WhatsApp admin
+        window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${adminEncoded}`, '_blank');
+        
+        // Buka WhatsApp user untuk konfirmasi
+        setTimeout(() => {
+            window.open(`https://wa.me/${waNumber}?text=${userEncoded}`, '_blank');
+        }, 500);
+        
+        return true;
+    }
+    
+    // ==================== FORM SUBMIT HANDLER ====================
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Ambil data form
+        const formData = {
+            nama: document.getElementById('nama').value.trim(),
+            wa: document.getElementById('wa').value.trim(),
+            kelas: document.getElementById('kelas').value.trim(),
+            jurusan: document.getElementById('jurusan').value,
+            divisi: document.getElementById('divisi').value,
+            alasan: document.getElementById('alasan').value.trim(),
+            pengalaman: document.getElementById('pengalaman').value.trim() || '-',
+            timestamp: new Date().toLocaleString('id-ID')
+        };
+        
+        // Validasi kelas (hanya kelas 10)
+        if (!validateKelas(formData.kelas)) {
+            showAlert('❌ Pendaftaran hanya untuk siswa KELAS 10! Format kelas diawali dengan "X" (Contoh: X TM 1)', 'error');
+            return;
+        }
+        
+        // Validasi semua field wajib
+        if (!formData.nama || !formData.wa || !formData.kelas || !formData.jurusan || !formData.divisi || !formData.alasan) {
+            showAlert('❌ Semua field wajib diisi!', 'error');
+            return;
+        }
+        
+        // Validasi nomor WhatsApp minimal 10 digit
+        const waClean = formData.wa.replace(/\D/g, '');
+        if (waClean.length < 10) {
+            showAlert('❌ Nomor WhatsApp tidak valid! Minimal 10 digit.', 'error');
+            return;
+        }
+        
+        // Disable button selama proses
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span><i class="fas fa-spinner fa-pulse"></i> Memproses...</span>';
+        
+        try {
+            // Kirim ke Google Sheets (optional)
+            await sendToGoogleSheets(formData);
+            
+            // Kirim notifikasi WhatsApp
+            await sendWhatsAppNotification(formData);
+            
+            showAlert('✅ Pendaftaran berhasil dikirim! Silakan cek WhatsApp untuk konfirmasi.', 'success');
+            
+            // Reset form
+            form.reset();
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('❌ Terjadi kesalahan. Silakan coba lagi.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>Kirim Pendaftaran →</span>';
+        }
     });
-  });
-  
-  // ==================== SHOW/HIDE ERROR ====================
-  function showError(message) {
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    setTimeout(() => {
-      errorDiv.style.display = 'none';
-    }, 3000);
-  }
-  
-  function hideError() {
-    errorDiv.style.display = 'none';
-  }
-  
-  // ==================== GET SELECTED DIVISIONS ====================
-  function getSelectedDivisions() {
-    const selected = [];
-    if (document.getElementById('divReporter').checked) selected.push('Reporter');
-    if (document.getElementById('divVideografer').checked) selected.push('Videografer');
-    if (document.getElementById('divFotografer').checked) selected.push('Fotografer');
-    if (document.getElementById('divEditor').checked) selected.push('Editor');
-    if (document.getElementById('divKreatif').checked) selected.push('Tim Kreatif');
-    return selected;
-  }
-  
-  // ==================== SUBMIT FORM ====================
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
     
-    // Ambil nilai
-    const fullName = document.getElementById('fullName').value.trim();
-    const nis = document.getElementById('nis').value.trim();
-    const kelas = document.getElementById('class').value;
-    const major = document.getElementById('major').value;
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const reason = document.getElementById('reason').value.trim();
-    const experience = document.getElementById('experience').value.trim();
-    const divisions = getSelectedDivisions();
-    
-    // Validasi
-    if (!fullName) {
-      showError('Nama lengkap wajib diisi!');
-      return;
-    }
-    if (!email) {
-      showError('Email wajib diisi!');
-      return;
-    }
-    if (!phone) {
-      showError('Nomor WhatsApp wajib diisi!');
-      return;
-    }
-    if (divisions.length === 0) {
-      showError('Pilih minimal 1 divisi!');
-      return;
-    }
-    if (!reason) {
-      showError('Alasan bergabung wajib diisi!');
-      return;
+    // ==================== NAVBAR & MOBILE MENU ====================
+    function initNavbar() {
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
     }
     
-    // Disable button
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    function initMobileMenu() {
+        const burgerBtn = document.getElementById('burgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        if (burgerBtn && mobileMenu) {
+            burgerBtn.addEventListener('click', () => {
+                burgerBtn.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    burgerBtn.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+    }
     
-    try {
-      // Simpan ke Supabase
-      const { data, error } = await supabaseClient
-        .from('registrations')
-        .insert([{
-          full_name: fullName,
-          nis: nis || null,
-          class: kelas || null,
-          major: major || null,
-          email: email,
-          phone: phone,
-          divisions: divisions,
-          reason: reason,
-          experience: experience || null,
-          status: 'pending',
-          registered_at: new Date()
-        }]);
-      
-      if (error) throw error;
-      
-      // Sembunyikan form, tampilkan success
-      form.style.display = 'none';
-      successDiv.style.display = 'block';
-      
-      // Scroll ke success message
-      successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-    } catch (error) {
-      console.error('Error:', error);
-      showError('Gagal mendaftar: ' + error.message);
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Daftar Sekarang';
-    }
-  });
-  
-  // ==================== NAVBAR SCROLL ====================
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
-  
-  // ==================== MOBILE MENU ====================
-  const burgerBtn = document.getElementById('burgerBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  
-  if (burgerBtn && mobileMenu) {
-    burgerBtn.addEventListener('click', () => {
-      burgerBtn.classList.toggle('active');
-      mobileMenu.classList.toggle('active');
-      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        initNavbar();
+        initMobileMenu();
     });
-    
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        burgerBtn.classList.remove('active');
-        mobileMenu.classList.remove('active');
-        document.body.style.overflow = '';
-      });
-    });
-  }
 </script>
-<script src="../assets/js/security.js"></script>
+<script src="../assets/js/security.js"></script> 
 </body>
 </html>
