@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+   <!-- Security Headers - TAMBAHKAN INI -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   
   <!-- SEO Meta Tags -->
   <title>Broadcasting SMK Texar Karawang | Ekstrakurikuler Media Sekolah</title>
@@ -80,6 +85,31 @@
 </head>
 <body>
 
+<script>
+    // ==================== CAPTCHA CHECK ====================
+    // Cek apakah sudah terverifikasi
+    function isCaptchaVerified() {
+        // Cek session storage
+        if (sessionStorage.getItem('captcha_verified') === 'true') {
+            return true;
+        }
+        // Cek cookie
+        if (document.cookie.includes('captcha_verified=true')) {
+            return true;
+        }
+        return false;
+    }
+    
+    // Jika belum terverifikasi, redirect ke halaman captcha
+    if (!isCaptchaVerified()) {
+        // Hindari infinite redirect
+        const currentPage = window.location.pathname.split('/').pop();
+        if (currentPage !== 'captcha-check.html') {
+            window.location.href = 'captcha-check.html';
+        }
+    }
+</script>
+  
 <!-- LOADING SCREEN -->
 <div id="loader" class="loader">
   <div class="loader-content">
