@@ -278,20 +278,26 @@ window.addEventListener('load', () => {
   addBreadcrumbStructuredData();
 });
 
-// Announcement Banner Handler (tambahkan di script.js)
+// ==================== ANNOUNCEMENT BANNER HANDLER ====================
+// Banner akan muncul SETIAP KALI halaman dibuka atau di-refresh
 document.addEventListener('DOMContentLoaded', function() {
     const banner = document.getElementById('securityAnnouncement');
     const closeBtn = document.getElementById('closeAnnouncement');
     
     if (banner && closeBtn) {
-        const isClosed = sessionStorage.getItem('announcement_closed');
-        if (isClosed === 'true') {
-            banner.style.display = 'none';
-        }
+        // HAPUS pengecekan sessionStorage - biar selalu muncul
         
+        // Pastikan banner terlihat setiap kali load
+        banner.style.display = 'flex';
+        banner.classList.remove('hide');
+        
+        // Tombol close hanya menyembunyikan banner untuk saat ini
+        // Tidak menyimpan ke sessionStorage, jadi saat refresh akan muncul lagi
         closeBtn.addEventListener('click', () => {
             banner.classList.add('hide');
-            sessionStorage.setItem('announcement_closed', 'false');
+            // HAPUS atau COMMENT baris di bawah ini
+            // sessionStorage.setItem('announcement_closed', 'true');
+            
             setTimeout(() => {
                 banner.style.display = 'none';
             }, 400);
