@@ -260,13 +260,13 @@ function addBreadcrumbStructuredData() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://broadcasting.smktexar.sch.id/"
+        "item": "https://broadcastingtexar.netlify.app/"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Broadcasting",
-        "item": "https://broadcasting.smktexar.sch.id/#program"
+        "item": "https://broadcastingtexar.netlify.app/#program"
       }
     ]
   });
@@ -276,4 +276,25 @@ function addBreadcrumbStructuredData() {
 // Execute after page load
 window.addEventListener('load', () => {
   addBreadcrumbStructuredData();
+});
+
+// Announcement Banner Handler (tambahkan di script.js)
+document.addEventListener('DOMContentLoaded', function() {
+    const banner = document.getElementById('securityAnnouncement');
+    const closeBtn = document.getElementById('closeAnnouncement');
+    
+    if (banner && closeBtn) {
+        const isClosed = sessionStorage.getItem('announcement_closed');
+        if (isClosed === 'true') {
+            banner.style.display = 'none';
+        }
+        
+        closeBtn.addEventListener('click', () => {
+            banner.classList.add('hide');
+            sessionStorage.setItem('announcement_closed', 'true');
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 400);
+        });
+    }
 });
